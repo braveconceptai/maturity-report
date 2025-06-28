@@ -1,0 +1,120 @@
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+.section-title {
+  font-size: 16px;
+  margin: 0;
+}
+
+.scorecard-heading {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 20px 0 10px;
+}
+
+.score-subheading {
+  font-size: 16px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.bold-text {
+  font-weight: bold;
+}
+
+.centered-subtext {
+  text-align: center;
+  margin: 6px 5px 10px;
+  color: #495057;
+  font-size: 11px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.page-break {
+  page-break-before: always;
+  height: 40px;
+}
+
+.download-button {
+  text-align: right;
+  margin-top: 10px;
+}
+
+.icon::before {
+  content: "🞂";
+  margin-right: 6px;
+}
+
+.right-align {
+  text-align: right;
+}
+
+.margin-top-10 {
+  margin-top: 10px;
+}
+
+.margin-top-12 {
+  margin-top: 12px;
+}
+
+.center-align {
+  text-align: center;
+}
+
+.logo-image {
+  max-width: 200px;
+  height: auto;
+}
+
+/* ===============================
+   Focus Styles for Accessibility
+   =============================== */
+a:focus,
+button:focus,
+.cta-button:focus {
+  outline: 2px solid #0056b3;       /* High-contrast blue outline */
+  outline-offset: 2px;              /* Creates spacing from edge */
+  background-color: #e2e6ea;        /* Subtle highlight fill */
+  border-radius: 4px;               /* Smooth corners for visual polish */
+  transition: background-color 0.2s ease, outline 0.2s ease;
+}
+
+/* Optional: For keyboard users only (if you use JS to detect keyboard use) */
+body.user-is-tabbing a:focus,
+body.user-is-tabbing button:focus,
+body.user-is-tabbing .cta-button:focus {
+  /* same styles as above */
+}
+.skip-nav {
+  position: absolute;
+  left: -999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.skip-nav:focus {
+  position: static;
+  width: auto;
+  height: auto;
+  padding: 8px 16px;
+  background: #0056b3;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  outline: 2px solid #fff;
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

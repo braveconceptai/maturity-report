@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Maturity Assessment Report - Brave Concept AI</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a href="#main-content" class="skip-nav">Skip to main content</a>
+  <header class="header" role="banner">
+  <div class="logo-section">
+    <img src="bc-logo.png" alt="Brave Concept Logo" class="logo-image" />
+    <div class="company-name">BRAVE CONCEPT AI</div>
+  </div>
+  <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
+  <div class="right-align margin-top-10">
+    <button onclick="generatePDF()" class="download-button" aria-label="Download a PDF copy of your AI Maturity Assessment Report">
+      <span aria-hidden="true">📄</span>
+      <span class="sr-only">Download a PDF copy of your AI Maturity Assessment Report</span>
+      <span aria-hidden="true">Download This Report</span>
+    </button>
+  </div>
+  <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
+</header>
+  <main id="main-content" role="main" tabindex="0">
+    <section class="section-header" role="region" aria-labelledby="report-details-heading">
+      <span class="icon" aria-hidden="true">📋</span>
+      <h2 id="report-details-heading" class="section-title">Report Details</h2>
+    </section>
+    <div class="report-details">
+  <div class="detail-item"><span class="detail-label">Prepared for:</span> <span id="respondent_name">Alex Johnson</span></div>
+  <div class="detail-item"><span class="detail-label">Company:</span> <span id="organization">Acme Corp</span></div>
+  <div class="detail-item"><span class="detail-label">Industry:</span> <span id="industry">Technology</span></div>
+  <div class="detail-item"><span class="detail-label">Assessment Date:</span> <span id="assessment_date">2025-06-28</span></div>
+  <div class="detail-item"><span class="detail-label">Report ID:</span> <span id="record_id">BC-2025-001</span></div>
+</div>
+    <!-- AI Maturity Snapshot -->
+    <section class="section-header" role="region" aria-labelledby="maturity-snapshot-heading">
+      <span class="icon" aria-hidden="true">📈</span>
+      <h2 id="maturity-snapshot-heading" class="section-title">Your AI Maturity Snapshot</h2>
+    </section>
+   <div class="maturity-snapshot">
+  <div class="perceived-maturity">
+    <div class="maturity-label">Your Perceived AI Maturity</div>
+    <div class="maturity-value"><span id="perceived_maturity">4</span></div>
+    <div class="maturity-description">
+      <span class="bold-text" id="perceived_maturity_level">Advanced</span>
+      <span class="description-text" id="perceived_maturity_desc">You believe your organization is highly mature in AI adoption.</span>
+    </div>
+  </div>
+
+  <div class="data-driven">
+    <div class="maturity-label">Data-Driven Assessment</div>
+    <div class="maturity-value"><span id="overall_maturity">3</span></div>
+    <div class="maturity-description">
+      <span class="bold-text" id="overall_maturity_level">Developing</span>
+      <span class="description-text" id="overall_maturity_desc">Your data-driven maturity is progressing but not yet advanced.</span>
+    </div>
+  </div>
+</div>
+
+    <!-- Key Findings -->
+<div class="key-findings">
+  <h3 class="findings-list">Key Findings</h3>
+  <strong>Strongest Area:</strong> <span id="strongest_area">Strategy & Planning</span><br />
+  <strong>Growth Opportunity:</strong> <span id="growth_opportunity">Data Readiness</span><br />
+  <strong>Current Phase:</strong> <span id="overall_maturity_level">Developing</span>
+</div>
+    </div>
+
+   <!-- AI Capability Profile -->
+<section class="section-header" role="region" aria-labelledby="capability-profile">
+  <span class="icon" aria-hidden="true">📊</span>
+  <h2 id="capability-profile" class="section-title">Your AI Capability Profile</h2>
+</section>
+
+<div class="scorecard-container" role="group" aria-label="AI capability scores">
+  <!-- Strategy -->
+  <div class="scorecard strategy" role="article" aria-labelledby="strategy-heading">
+    <h2 class="scorecard-heading">Strategy & Planning</h2>
+    <div class="scorecard-score" aria-label="Score">4 out of 5</div>
+    <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+      <div class="scorecard-fill" data-score="4"></div>
+    </div>
+    <div class="scorecard-level">Advanced</div>
+  </div>
+
+  <!-- People -->
+  <div class="scorecard people" role="article" aria-labelledby="people-heading">
+    <h2 class="scorecard-heading">People & Skills</h2>
+    <div class="scorecard-score" aria-label="Score">3 out of 5</div>
+    <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+      <div class="scorecard-fill" data-score="3"></div>
+    </div>
+    <div class="scorecard-level">Developing</div>
+  </div>
+
+  <!-- Tools -->
+  <div class="scorecard tools" role="article" aria-labelledby="tools-heading">
+    <h2 class="scorecard-heading">Tools & Integration</h2>
+    <div class="scorecard-score" aria-label="Score">2 out of 5</div>
+    <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
+      <div class="scorecard-fill" data-score="2"></div>
+    </div>
+    <div class="scorecard-level">Emerging</div>
+  </div>
+
+  <!-- Data -->
+  <div class="scorecard data" role="article" aria-labelledby="data-heading">
+    <h2 class="scorecard-heading">Data Readiness</h2>
+    <div class="scorecard-score" aria-label="Score">3 out of 5</div>
+    <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+      <div class="scorecard-fill" data-score="3"></div>
+    </div>
+    <div class="scorecard-level">Developing</div>
+  </div>
+
+  <!-- Ethics -->
+  <div class="scorecard ethics" role="article" aria-labelledby="ethics-heading">
+    <h2 class="scorecard-heading">Ethics & Governance</h2>
+    <div class="scorecard-score" aria-label="Score">4 out of 5</div>
+    <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+      <div class="scorecard-fill" data-score="4"></div>
+    </div>
+    <div class="scorecard-level">Advanced</div>
+  </div>
+</div>
+
+   <p class="centered-subtext">
+  Your scores across all AI maturity dimensions
+</p>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+   <!-- Detailed Score Analysis -->
+<section class="section-header" role="region">
+  <span class="icon" aria-hidden="true">🧠</span>
+  <h2 class="section-title">Detailed Score Analysis</h2>
+</section>
+
+<div class="score-analysis">
+
+  <!-- Strategy -->
+  <div class="score-item strategy-score">
+    <h3 class="score-subheading">
+      🧠 Strategy & Planning: 4/5 – Advanced
+    </h3>
+    <div class="score-description">
+      At the <strong>Advanced</strong> stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.
+    </div>
+    <div class="industry-context">
+      Research shows 39% of companies are in emerging phase, 31% developing, 22% expanding, and only 1% achieve strategic maturity. [McKinsey 2024]
+    </div>
+  </div>
+
+  <!-- People & Skills -->
+  <div class="score-item people-score">
+    <h3 class="score-subheading">
+      👥 People & Skills: 3/5 – Developing
+    </h3>
+    <div class="score-description">
+      Your workforce exhibits <strong>Developing</strong> AI capability, indicating how prepared your team is to leverage AI tools effectively.
+    </div>
+    <div class="industry-context">
+      70% of business leaders report skills gaps limiting growth, with only 12% of IT professionals actually possessing AI skills despite widespread adoption. [Springboard 2024, Deloitte 2024]
+    </div>
+  </div>
+
+  <!-- Tools & Integration -->
+  <div class="score-item tools-score">
+    <h3 class="score-subheading">
+      🛠️ Tools & Integration: 2/5 – Emerging
+    </h3>
+    <div class="score-description">
+      Your technical infrastructure rates as <strong>Emerging</strong> for AI implementation. This evaluates not just the tools you’ve adopted, but how seamlessly they work together.
+    </div>
+    <div class="industry-context">
+      Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]
+    </div>
+  </div>
+
+  <!-- Data Readiness -->
+  <div class="score-item data-score">
+    <h3 class="score-subheading">
+      📊 Data Readiness: 3/5 – Developing
+    </h3>
+    <div class="score-description">
+      Your data foundation measures <strong>Developing</strong> for all applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.
+    </div>
+    <div class="industry-context">
+      96% of organizations experience data quality issues in AI projects, with only 18% having clear strategies. [Forrester/PwC 2024, McKinsey 2024]
+    </div>
+  </div>
+
+  <!-- Ethics & Governance -->
+  <div class="score-item ethics-score">
+    <h3 class="score-subheading">
+      🧭 Ethics & Governance: 4/5 – Advanced
+    </h3>
+    <div class="score-description">
+      Your approach to responsible AI practices achieves <strong>Advanced</strong> maturity, encompassing policies, oversight mechanisms, and cultural practices.
+    </div>
+    <div class="industry-context">
+      Only 18% have implemented policies, and just 21% have fully operationalized responsible AI across their orgs. [McKinsey 2024, Accenture 2024]
+    </div>
+  </div>
+
+</div>
+
+      <div style="margin-top: 18px; padding: 10px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 6px; font-size: 11px; color: #6c757d; font-style: italic; text-align: center;">
+        Industry insights: McKinsey Global AI Survey 2024, Deloitte State of AI 2024, Accenture AI Maturity Research 2024, PwC Responsible AI Survey 2024
+      </div>
+    </div>
+
+    <!-- Page Break -->
+    <div class="page-break"></div>
+    <!-- Personalized Insights -->
+    <section class="section-header" role="region" aria-labelledby="personalized-insights">
+      <span class="icon" aria-hidden="true">💡</span>
+      <h2 id="personalized-insights" class="section-title">Your Personalized Insights</h2>
+    </section>
+
+    <div class="insights-section">
+  <div class="priorities-challenges">
+    <h3>Your AI Priorities & Challenges</h3>
+    <p style="margin-bottom: 12px;"><strong>Based on your assessment responses, here's what you told us:</strong></p>
+
+    <p><strong>Top Opportunities:</strong><br /> AI-powered customer support, Predictive analytics for sales, Automated document processing</p>
+    <p><strong>Top Challenges:</strong><br /> Data quality, Change management, Integration with legacy systems</p>
+  </div>
+
+  <div class="recommendations">
+    <h3>Tailored Recommendations</h3>
+    <ol>
+      <li>Invest in upskilling your workforce on AI fundamentals and tools.</li>
+      <li>Prioritize data quality initiatives to improve AI outcomes.</li>
+      <li>Develop a roadmap for integrating AI with existing business processes.</li>
+    </ol>
+  </div>
+
+  <div class="ai-analysis">
+    <h3>AI-Powered Analysis</h3>
+    <p>Your organization demonstrates strong strategic intent and ethical awareness, but faces challenges in technical integration and data readiness. Focusing on workforce development and data quality will accelerate your AI maturity.</p>
+  </div>
+</div>
+
+      <div class="cta-section">
+        <h3>🚀 Ready to Accelerate Your AI Journey?</h3>
+       <p>
+  Your assessment reveals significant potential, but also complex challenges that require strategic navigation. The gap between your perceived <strong>Advanced</strong> and actual <strong>Developing</strong> maturity highlights opportunities to drive strategic change.
+</p>
+
+        <h4>📞 Book Your Free AI Strategy Session</h4>
+        <a href="https://calendly.com/tony-braveconcept-4qek/30min" class="cta-button">Book Your Free 30-Minute Strategy Session</a>
+
+        <p><strong>Get personalized guidance from Brave Concept AI experts who can help you:</strong></p>
+       <ul>
+  <li>Develop a clear 90-day AI implementation plan</li>
+  <li>Navigate the specific challenges you identified</li>
+  <li>Leverage your <strong>Strategy & Planning</strong> to drive quick wins</li>
+  <li>Address your <strong>Tools & Integration</strong> systematically</li>
+</ul>
+      </div>
+    </div>
+    <!-- Contact Information -->
+    <div class="contact-info">
+      <div class="contact-item">📧 <strong>Email:</strong> info@braveconcept.ai</div>
+      <div class="contact-item">💬 <strong>AI Assistant:</strong> Ask BellaBot at braveconcept.ai</div>
+      <div class="contact-item">🌐 <strong>Website:</strong> braveconcept.ai</div>
+      <div class="contact-item">📞 <strong>Phone:</strong> (802) 560-8669</div>
+      <div class="margin-top-12 center-align bold-text">
+        Ready to get started? Schedule your complimentary consultation above.
+      </div>
+    </div>
+  <div style="text-align: center; margin: 20px;">
+  <div style="text-align: center; margin-top: 40px;">
+  <button onclick="generatePDF()" aria-label="Download a PDF copy of your report">📄 Download This Report</button>
+</div>
+  
+</main>
+<script>
+  const params = new URLSearchParams(window.location.search);
+  [
+    "respondent_name", "organization", "industry", "assessment_date", "record_id",
+    "perceived_maturity", "perceived_maturity_desc", "overall_maturity", "overall_maturity_desc",
+    "strategy_score", "strategy_maturity_level",
+    "people_score", "people_maturity_level",
+    "tools_score", "tools_maturity_level",
+    "data_score", "data_maturity_level",
+    "ethics_score", "ethics_maturity_level",
+    "strongest_area", "growth_opportunity", "top_opportunities", "top_challenges",
+    "recommendation1", "recommendation2", "recommendation3", "analysis"
+  ].forEach(key => {
+    const el = document.getElementById(key);
+    if (el && params.has(key)) {
+      el.innerText = decodeURIComponent(params.get(key));
+    }
+  });
+
+  document.querySelectorAll('.scorecard-fill').forEach(el => {
+    const score = el.getAttribute('data-score');
+    if (score) {
+      el.style.width = `calc(${score} * 20%)`;
+    }
+  });
+</script>
+<script>
+  function handleFirstTab(e) {
+    if (e.key === 'Tab') {
+      document.body.classList.add('user-is-tabbing');
+      window.removeEventListener('keydown', handleFirstTab);
+    }
+  }
+  window.addEventListener('keydown', handleFirstTab);
+</script>
+</body>
+</html>
