@@ -1,258 +1,250 @@
+/* ===============================
+   Brand Colors & Gradients
+   =============================== */
+:root {
+  --primary-blue: #0056b3;
+  --secondary-blue: #e2e6ea;
+  --accent-gradient: linear-gradient(90deg, #0056b3 0%, #3a8dde 100%);
+  --header-gradient: linear-gradient(90deg, #0056b3 0%, #e2e6ea 100%);
+  --button-gradient: linear-gradient(90deg, #0056b3 0%, #3a8dde 100%);
+  --section-gradient: linear-gradient(135deg, #e2e6ea 0%, #f8f9fa 100%);
+  --transition: background 0.4s cubic-bezier(.4,0,.2,1), color 0.4s cubic-bezier(.4,0,.2,1);
+}
+
 body {
   font-family: 'Montserrat', sans-serif;
+  background: var(--section-gradient);
+  color: #222;
+  transition: var(--transition);
 }
 
-.section-title {
-  font-size: 16px;
-  margin: 0;
+header, .scorecard-heading, .section-title {
+  background: var(--header-gradient);
+  color: var(--primary-blue);
+  padding: 16px 0 16px 0;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 8px rgba(0,86,179,0.08);
+  transition: var(--transition);
 }
 
-.scorecard-heading {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 20px 0 10px;
+.scorecard-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+  align-items: stretch;
+  margin-bottom: 32px;
 }
 
-.score-subheading {
-  font-size: 16px;
-  font-weight: bold;
-  margin: 10px 0;
-}
-
-.bold-text {
-  font-weight: bold;
-}
-
-.centered-subtext {
-  text-align: center;
-  margin: 6px 5px 10px;
-  color: #495057;
-  font-size: 11px;
-  font-family: 'Montserrat', sans-serif;
-}
-
-.page-break {
-  page-break-before: always;
-  height: 40px;
-}
-
-.download-button {
-  text-align: right;
-  margin-top: 10px;
-  transition: all 0.2s ease;
-  border-radius: 4px;
-}
-
-.download-button:hover {
-  background-color: #e2e6ea;
-  cursor: pointer;
-}
-
-.icon::before {
-  content: "🞂";
-  margin-right: 6px;
-}
-
-.right-align {
-  text-align: right;
-}
-
-.margin-top-10 {
-  margin-top: 10px;
-}
-
-.margin-top-12 {
-  margin-top: 12px;
-}
-
-.center-align {
-  text-align: center;
-}
-
-.logo-image {
-  max-width: 200px;
-  height: auto;
+/* Remove list-style for containers that might have emojis or icons */
+.scorecard-container, .score-analysis, .insights-section ul, .cta-section ul, .key-findings, .contact-info {
+  list-style: none;
+  padding-left: 0;
 }
 
 .section-card {
-  background: #f8f9fa;
+  background: var(--section-gradient);
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 24px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 3px rgba(0, 86, 179, 0.08);
+  border: 1px solid var(--secondary-blue);
+  transition: var(--transition);
+  width: 48%;
+  min-width: 300px;
+  box-sizing: border-box;
 }
 
-.icon {
-  font-size: 20px;
-  margin-right: 8px;
+.download-button, .cta-button {
+  background: var(--button-gradient);
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,86,179,0.10);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 4px;
+  transition: var(--transition);
 }
 
-.highlight {
-  font-weight: bold;
-  color: #0056b3;
+.download-button {
+  background: var(--button-gradient, linear-gradient(90deg, #0056b3 0%, #3a8dde 100%));
+  color: #fff;
+  border: none;
+  box-shadow: 0 2px 8px rgba(0,86,179,0.10);
+  font-weight: 600;
+  padding: 10px 24px;
+  border-radius: 4px;
+  transition: var(--transition);
+  font-size: 1.05rem;
+  position: relative;
+}
+.download-button::before {
+  content: "\1F4BE  "; /* Floppy disk emoji as download icon */
+  font-size: 1.1em;
+  margin-right: 7px;
+  vertical-align: -2px;
 }
 
-.subsection-title {
-  font-size: 14px;
-  font-weight: bold;
-  margin-top: 12px;
-}
-
-.score-pill {
-  display: inline-block;
-  padding: 4px 8px;
-  background-color: #e0e0e0;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-/* ===============================
-   Focus Styles for Accessibility
-   =============================== */
-a:focus,
-button:focus,
-.cta-button:focus {
-  outline: 2px solid #0056b3;       /* High-contrast blue outline */
-  outline-offset: 2px;              /* Creates spacing from edge */
-  background-color: #e2e6ea;        /* Subtle highlight fill */
-  border-radius: 4px;               /* Smooth corners for visual polish */
-  transition: background-color 0.2s ease, outline 0.2s ease;
-}
-
-/* Optional: For keyboard users only (if you use JS to detect keyboard use) */
-body.user-is-tabbing a:focus,
-body.user-is-tabbing button:focus,
-body.user-is-tabbing .cta-button:focus {
-  /* same styles as above */
-}
-.skip-nav {
-  position: absolute;
-  left: -999px;
-  top: auto;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  z-index: 100;
-}
-
-.skip-nav:focus {
-  position: static;
-  width: auto;
-  height: auto;
-  padding: 8px 16px;
-  background: #0056b3;
-  color: white;
-  text-decoration: none;
-  font-weight: bold;
-  outline: 2px solid #fff;
-}
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+.download-button:hover, .cta-button:hover {
+  background: linear-gradient(90deg, #3a8dde 0%, #0056b3 100%);
+  color: #fff;
+  box-shadow: 0 4px 16px rgba(0,86,179,0.15);
 }
 
 @media (prefers-color-scheme: dark) {
+  :root {
+    --primary-blue: #8ab4f8;
+    --secondary-blue: #23272a;
+    --accent-gradient: linear-gradient(90deg, #0056b3 0%, #8ab4f8 100%);
+    --header-gradient: linear-gradient(90deg, #23272a 0%, #0056b3 100%);
+    --button-gradient: linear-gradient(90deg, #0056b3 0%, #23272a 100%);
+    --section-gradient: linear-gradient(135deg, #181a1b 0%, #23272a 100%);
+  }
   body {
-    background: #181a1b;
+    background: var(--section-gradient);
     color: #f1f3f4;
+  }
+  header, .scorecard-heading, .section-title {
+    background: var(--header-gradient);
+    color: var(--primary-blue);
+    box-shadow: 0 2px 8px rgba(0,86,179,0.18);
   }
   .section-card {
-    background: #23272a;
-    border: 1px solid #343a40;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    background: var(--section-gradient);
+    border: 1px solid var(--secondary-blue);
+    box-shadow: 0 1px 3px rgba(0,86,179,0.18);
   }
-  .scorecard-fill {
-    background: #0056b3;
-  }
-  .cta-button {
-    background: #0056b3;
+  .download-button, .cta-button {
+    background: var(--button-gradient);
     color: #fff;
-    border: 1px solid #0056b3;
+    border: none;
+    box-shadow: 0 2px 8px rgba(0,86,179,0.18);
   }
-  .cta-button:hover {
-    background: #003a75;
+  .download-button:hover, .cta-button:hover {
+    background: linear-gradient(90deg, #23272a 0%, #8ab4f8 100%);
     color: #fff;
-  }
-  .download-button {
-    background: #23272a;
-    color: #f1f3f4;
-    border: 1px solid #343a40;
-  }
-  .download-button:hover {
-    background: #343a40;
-  }
-  .page-break {
-    background: #23272a;
+    box-shadow: 0 4px 16px rgba(0,86,179,0.25);
   }
   .icon {
-    color: #8ab4f8;
+    color: var(--primary-blue);
   }
   .highlight {
-    color: #8ab4f8;
+    color: var(--primary-blue);
+    background: linear-gradient(90deg, #23272a 0%, #0056b3 100%);
   }
   .score-pill {
     background: #343a40;
-    color: #f1f3f4;
+    color: var(--primary-blue);
   }
 }
 
-@media print {
-  /* Hide navigation, buttons, CTAs, header/footer */
-  .download-button,
-  .cta-section,
-  .skip-nav,
-  header,
-  .contact-info,
-  button,
-  .cta-button,
-  [aria-label*="Download"],
-  [role="banner"],
-  [role="contentinfo"] {
-    display: none !important;
+.header {
+  background: #003a75;
+  color: #fff;
+  padding: 40px 16px 32px 16px;
+  width: 100%;
+  box-sizing: border-box;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  max-width: 700px;
+  margin: 0 auto;
+}
+
+.logo-image {
+  max-width: 160px;
+  height: auto;
+  margin-bottom: 8px;
+}
+
+.main-title {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin: 0 0 4px 0;
+  text-align: center;
+}
+
+.company-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  margin-top: 8px;
+  text-align: center;
+  opacity: 0.85;
+}
+
+.tagline {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  text-align: center;
+  opacity: 0.92;
+}
+
+.header-actions {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.section-header {
+  background: var(--header-gradient);
+  color: var(--primary-blue);
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 2px 8px rgba(0,86,179,0.08);
+  padding: 16px 0 16px 0;
+  margin-bottom: 0;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.citation {
+  font-size: 0.85rem;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+@media (max-width: 600px) {
+  .header {
+    padding: 28px 4vw 20px 4vw;
   }
-  /* Optimize typography for print */
-  body {
-    color: #000;
-    background: #fff !important;
-    font-size: 12pt;
-    font-family: 'Times New Roman', Times, serif;
+  .main-title {
+    font-size: 1.2rem;
   }
-  .section-title, .scorecard-heading, .score-subheading {
-    color: #000;
-    font-family: 'Times New Roman', Times, serif;
-    font-weight: bold;
+  .logo-image {
+    max-width: 110px;
   }
-  .section-card, .scorecard, .score-item {
-    background: #fff !important;
-    box-shadow: none !important;
-    border: 1px solid #bbb !important;
-    color: #000 !important;
+  .header-content {
+    gap: 12px;
   }
-  .icon {
-    color: #000 !important;
+}
+
+@media (max-width: 768px) {
+  .scorecard-container {
+    flex-direction: column;
+    gap: 18px;
   }
-  .scorecard-fill {
-    background: #0056b3 !important;
+  .section-card {
+    width: 100%;
+    min-width: 0;
   }
-  .highlight {
-    color: #0056b3 !important;
-  }
-  .page-break {
-    page-break-before: always !important;
-    break-before: page !important;
-    height: 40px !important;
-    background: none !important;
-  }
-  /* Remove unnecessary margins for print */
-  .margin-top-10, .margin-top-12, .center-align, .right-align {
-    margin-top: 0 !important;
-    text-align: left !important;
-  }
+}
+
+.validation-footer {
+  text-align: center;
+  font-size: 12px;
+  margin-top: 40px;
+}
+
+.validation-badges a {
+  display: inline-block;
+  margin: 0 8px;
 }

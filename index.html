@@ -1,243 +1,238 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>AI Maturity Assessment Report - Brave Concept AI</title>
   <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet">
   <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="styles.min.css">
 </head>
 <body>
   <a href="#main-content" class="skip-nav">Skip to main content</a>
-  <header class="header" role="banner">
-  <div class="logo-section">
-    <img src="brave-logo.png" alt="Brave Concept Logo" class="logo-image" />
-    <div class="company-name">BRAVE CONCEPT AI</div>
-  </div>
-  <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
-  <div class="right-align margin-top-10">
-    <a href="ai-maturity-report.pdf" download class="download-button">Download This Report</a>
-  </div>
-  <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
-</header>
-  <main id="main-content" role="main" tabindex="0">
-    <section class="section-header" role="region" aria-labelledby="report-details-heading">
+  <header class="header">
+    <div class="header-content">
+      <img src="brave-logo.png" alt="Brave Concept Logo" class="logo-image">
+      <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
+      <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
+      <div class="header-actions">
+        <a href="#" id="download-html" class="download-button" download="ai-maturity-report.html">Download This Report</a>
+      </div>
+      <div class="company-name">BRAVE CONCEPT AI</div>
+    </div>
+  </header>
+  <main id="main-content" tabindex="0">
+    <section class="section-header" aria-labelledby="report-details-heading">
       <span class="icon" aria-hidden="true">📋</span>
       <h2 id="report-details-heading" class="section-title">Report Details</h2>
     </section>
     <div class="report-details">
-  <div class="detail-item"><span class="detail-label">Prepared for:</span> <span id="respondent_name">Alex Johnson</span></div>
-  <div class="detail-item"><span class="detail-label">Company:</span> <span id="organization">Acme Corp</span></div>
-  <div class="detail-item"><span class="detail-label">Industry:</span> <span id="industry">Technology</span></div>
-  <div class="detail-item"><span class="detail-label">Assessment Date:</span> <span id="assessment_date">2025-06-28</span></div>
-  <div class="detail-item"><span class="detail-label">Report ID:</span> <span id="record_id">BC-2025-001</span></div>
-</div>
+      <div class="detail-item"><span class="detail-label">Prepared for:</span> <span id="respondent_name">Alex Johnson</span></div>
+      <div class="detail-item"><span class="detail-label">Company:</span> <span id="organization">Acme Corp</span></div>
+      <div class="detail-item"><span class="detail-label">Industry:</span> <span id="industry">Technology</span></div>
+      <div class="detail-item"><span class="detail-label">Assessment Date:</span> <span id="assessment_date">2025-06-28</span></div>
+      <div class="detail-item"><span class="detail-label">Report ID:</span> <span id="record_id">BC-2025-001</span></div>
+    </div>
     <!-- AI Maturity Snapshot -->
-    <section class="section-header" role="region" aria-labelledby="maturity-snapshot-heading">
-      <span class="icon" aria-hidden="true">📈</span>
-      <h2 id="maturity-snapshot-heading" class="section-title">Your AI Maturity Snapshot</h2>
-    </section>
-   <div class="maturity-snapshot">
-  <div class="perceived-maturity">
-    <div class="maturity-label">Your Perceived AI Maturity</div>
-    <div class="maturity-value"><span id="perceived_maturity">4</span></div>
-    <div class="maturity-description">
-      <span class="bold-text" id="perceived_maturity_level">Advanced</span>
-      <span class="description-text" id="perceived_maturity_desc">You believe your organization is highly mature in AI adoption.</span>
-    </div>
-  </div>
-
-  <div class="data-driven">
-    <div class="maturity-label">Data-Driven Assessment</div>
-    <div class="maturity-value"><span id="overall_maturity">3</span></div>
-    <div class="maturity-description">
-      <span class="bold-text" id="overall_maturity_level">Developing</span>
-      <span class="description-text" id="overall_maturity_desc">Your data-driven maturity is progressing but not yet advanced.</span>
-    </div>
-  </div>
-</div>
-
-    <!-- Key Findings -->
-<div class="key-findings">
-  <h3 class="findings-list">Key Findings</h3>
-  <strong>Strongest Area:</strong> <span id="strongest_area">Strategy & Planning</span><br />
-  <strong>Growth Opportunity:</strong> <span id="growth_opportunity">Data Readiness</span><br />
-  <strong>Current Phase:</strong> <span id="overall_maturity_level">Developing</span>
-</div>
-    </div>
-
-   <!-- AI Capability Profile -->
-<section class="section-header" role="region" aria-labelledby="capability-profile">
-  <span class="icon" aria-hidden="true">📊</span>
-  <h2 id="capability-profile" class="section-title">Your AI Capability Profile</h2>
-</section>
-
-<div class="scorecard-container" role="group" aria-label="AI capability scores">
-  <!-- Strategy -->
-  <div class="section-card">
-    <div class="scorecard strategy" role="article" aria-labelledby="strategy-heading">
-      <span class="icon" aria-hidden="true">🧠</span>
-      <h2 class="scorecard-heading">Strategy & Planning</h2>
-      <div class="scorecard-score" aria-label="Score">4 out of 5</div>
-      <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-        <div class="scorecard-fill" data-score="4"></div>
+      <section class="section-header section-card" aria-labelledby="maturity-snapshot-heading">
+        <span class="icon" aria-hidden="true">📈</span>
+        <h2 id="maturity-snapshot-heading" class="section-title">Your AI Maturity Snapshot</h2>
+      </section>
+      <div class="section-card maturity-snapshot">
+        <div class="perceived-maturity">
+          <div class="maturity-label">Your Perceived AI Maturity</div>
+          <div class="maturity-value"><span id="perceived_maturity">4</span></div>
+          <div class="maturity-description">
+            <span class="bold-text" id="perceived_maturity_level">Advanced</span>
+            <span class="description-text" id="perceived_maturity_desc">You believe your organization is highly mature in AI adoption.</span>
+          </div>
+        </div>
+        <div class="data-driven">
+          <div class="maturity-label">Data-Driven Assessment</div>
+          <div class="maturity-value"><span id="overall_maturity">3</span></div>
+          <div class="maturity-description">
+            <span class="bold-text" id="overall_maturity_level">Developing</span>
+            <span class="description-text" id="overall_maturity_desc">Your data-driven maturity is progressing but not yet advanced.</span>
+          </div>
+        </div>
       </div>
-      <div class="scorecard-level">Advanced</div>
-    </div>
-  </div>
 
-  <!-- People -->
-  <div class="section-card">
-    <div class="scorecard people" role="article" aria-labelledby="people-heading">
-      <span class="icon" aria-hidden="true">👥</span>
-      <h2 class="scorecard-heading">People & Skills</h2>
-      <div class="scorecard-score" aria-label="Score">3 out of 5</div>
-      <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-        <div class="scorecard-fill" data-score="3"></div>
+      <!-- Key Findings -->
+      <div class="section-card key-findings">
+        <h3 class="findings-list section-header">Key Findings</h3>
+        <strong>Strongest Area:</strong> <span id="strongest_area">Strategy & Planning</span><br>
+        <strong>Growth Opportunity:</strong> <span id="growth_opportunity">Data Readiness</span><br>
+        <strong>Current Phase:</strong> <span id="overall_maturity_level_secondary">Developing</span>
       </div>
-      <div class="scorecard-level">Developing</div>
-    </div>
-  </div>
 
-  <!-- Tools -->
-  <div class="section-card">
-    <div class="scorecard tools" role="article" aria-labelledby="tools-heading">
-      <span class="icon" aria-hidden="true">🛠️</span>
-      <h2 class="scorecard-heading">Tools & Integration</h2>
-      <div class="scorecard-score" aria-label="Score">2 out of 5</div>
-      <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
-        <div class="scorecard-fill" data-score="2"></div>
+      <!-- AI Capability Profile -->
+      <section class="section-header section-card" aria-labelledby="capability-profile">
+        <span class="icon" aria-hidden="true">📊</span>
+        <h2 id="capability-profile" class="section-title">Your AI Capability Profile</h2>
+      </section>
+
+      <div class="scorecard-container" role="group" aria-label="AI capability scores">
+        <!-- Strategy -->
+        <div class="section-card">
+          <div class="scorecard strategy" role="article" aria-labelledby="strategy-heading">
+            <span class="icon" aria-hidden="true">🧠</span>
+            <h2 class="scorecard-heading" id="strategy-heading">Strategy & Planning</h2>
+            <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+            <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+              <div class="scorecard-fill" data-score="4"></div>
+            </div>
+            <div class="scorecard-level">Advanced</div>
+          </div>
+        </div>
+
+        <!-- People -->
+        <div class="section-card">
+          <div class="scorecard people" role="article" aria-labelledby="people-heading">
+            <span class="icon" aria-hidden="true">👥</span>
+            <h2 class="scorecard-heading" id="people-heading">People & Skills</h2>
+            <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+            <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+              <div class="scorecard-fill" data-score="3"></div>
+            </div>
+            <div class="scorecard-level">Developing</div>
+          </div>
+        </div>
+
+        <!-- Tools -->
+        <div class="section-card">
+          <div class="scorecard tools" role="article" aria-labelledby="tools-heading">
+            <span class="icon" aria-hidden="true">🛠️</span>
+            <h2 class="scorecard-heading" id="tools-heading">Tools & Integration</h2>
+            <div class="scorecard-score"><span class="sr-only">Score: </span>2 out of 5</div>
+            <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
+              <div class="scorecard-fill" data-score="2"></div>
+            </div>
+            <div class="scorecard-level">Emerging</div>
+          </div>
+        </div>
+
+        <!-- Data -->
+        <div class="section-card">
+          <div class="scorecard data" role="article" aria-labelledby="data-heading">
+            <span class="icon" aria-hidden="true">📊</span>
+            <h2 class="scorecard-heading" id="data-heading">Data Readiness</h2>
+            <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+            <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+              <div class="scorecard-fill" data-score="3"></div>
+            </div>
+            <div class="scorecard-level">Developing</div>
+          </div>
+        </div>
+
+        <!-- Ethics -->
+        <div class="section-card">
+          <div class="scorecard ethics" role="article" aria-labelledby="ethics-heading">
+            <span class="icon" aria-hidden="true">🧭</span>
+            <h2 class="scorecard-heading" id="ethics-heading">Ethics & Governance</h2>
+            <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+            <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+              <div class="scorecard-fill" data-score="4"></div>
+            </div>
+            <div class="scorecard-level">Advanced</div>
+          </div>
+        </div>
       </div>
-      <div class="scorecard-level">Emerging</div>
-    </div>
-  </div>
 
-  <!-- Data -->
-  <div class="section-card">
-    <div class="scorecard data" role="article" aria-labelledby="data-heading">
-      <span class="icon" aria-hidden="true">📊</span>
-      <h2 class="scorecard-heading">Data Readiness</h2>
-      <div class="scorecard-score" aria-label="Score">3 out of 5</div>
-      <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-        <div class="scorecard-fill" data-score="3"></div>
+      <p class="centered-subtext">
+        Your scores across all AI maturity dimensions
+      </p>
+
+      <!-- Page Break -->
+      <div class="page-break"></div>
+      <!-- Detailed Score Analysis -->
+      <section class="section-header section-card">
+        <span class="icon" aria-hidden="true">🧠</span>
+        <h2 class="section-title">Detailed Score Analysis</h2>
+      </section>
+      <div class="section-card score-analysis">
+
+        <!-- Strategy -->
+        <div class="score-item strategy-score">
+          <h3 class="score-subheading">
+            🧠 Strategy & Planning: 4/5 – Advanced
+          </h3>
+          <div class="score-description">
+            At the <strong>Advanced</strong> stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.
+          </div>
+          <div class="industry-context">
+            Research shows 39% of companies are in emerging phase, 31% developing, 22% expanding, and only 1% achieve strategic maturity. [McKinsey 2024]
+          </div>
+        </div>
+
+        <!-- People & Skills -->
+        <div class="score-item people-score">
+          <h3 class="score-subheading">
+            👥 People & Skills: 3/5 – Developing
+          </h3>
+          <div class="score-description">
+            Your workforce exhibits <strong>Developing</strong> AI capability, indicating how prepared your team is to leverage AI tools effectively.
+          </div>
+          <div class="industry-context">
+            70% of business leaders report skills gaps limiting growth, with only 12% of IT professionals actually possessing AI skills despite widespread adoption. [Springboard 2024, Deloitte 2024]
+          </div>
+        </div>
+
+        <!-- Tools & Integration -->
+        <div class="score-item tools-score">
+          <h3 class="score-subheading">
+            🛠️ Tools & Integration: 2/5 – Emerging
+          </h3>
+          <div class="score-description">
+            Your technical infrastructure rates as <strong>Emerging</strong> for AI implementation. This evaluates not just the tools you’ve adopted, but how seamlessly they work together.
+          </div>
+          <div class="industry-context">
+            Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]
+          </div>
+        </div>
+
+        <!-- Data Readiness -->
+        <div class="score-item data-score">
+          <h3 class="score-subheading">
+            📊 Data Readiness: 3/5 – Developing
+          </h3>
+          <div class="score-description">
+            Your data foundation measures <strong>Developing</strong> for all applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.
+          </div>
+          <div class="industry-context">
+            96% of organizations experience data quality issues in AI projects, with only 18% having clear strategies. [Forrester/PwC 2024, McKinsey 2024]
+          </div>
+        </div>
+
+        <!-- Ethics & Governance -->
+        <div class="score-item ethics-score">
+          <h3 class="score-subheading">
+            🧭 Ethics & Governance: 4/5 – Advanced
+          </h3>
+          <div class="score-description">
+            Your approach to responsible AI practices achieves <strong>Advanced</strong> maturity, encompassing policies, oversight mechanisms, and cultural practices.
+          </div>
+          <div class="industry-context">
+            Only 18% have implemented policies, and just 21% have fully operationalized responsible AI across their orgs. [McKinsey 2024, Accenture 2024]
+          </div>
+        </div>
+
       </div>
-      <div class="scorecard-level">Developing</div>
-    </div>
-  </div>
 
-  <!-- Ethics -->
-  <div class="section-card">
-    <div class="scorecard ethics" role="article" aria-labelledby="ethics-heading">
-      <span class="icon" aria-hidden="true">🧭</span>
-      <h2 class="scorecard-heading">Ethics & Governance</h2>
-      <div class="scorecard-score" aria-label="Score">4 out of 5</div>
-      <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-        <div class="scorecard-fill" data-score="4"></div>
-      </div>
-      <div class="scorecard-level">Advanced</div>
-    </div>
-  </div>
-</div>
-
-   <p class="centered-subtext">
-  Your scores across all AI maturity dimensions
-</p>
-
-    <!-- Page Break -->
-    <div class="page-break"></div>
-   <!-- Detailed Score Analysis -->
-<section class="section-header" role="region">
-  <span class="icon" aria-hidden="true">🧠</span>
-  <h2 class="section-title">Detailed Score Analysis</h2>
-</section>
-
-<div class="score-analysis">
-
-  <!-- Strategy -->
-  <div class="score-item strategy-score">
-    <h3 class="score-subheading">
-      🧠 Strategy & Planning: 4/5 – Advanced
-    </h3>
-    <div class="score-description">
-      At the <strong>Advanced</strong> stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.
-    </div>
-    <div class="industry-context">
-      Research shows 39% of companies are in emerging phase, 31% developing, 22% expanding, and only 1% achieve strategic maturity. [McKinsey 2024]
-    </div>
-  </div>
-
-  <!-- People & Skills -->
-  <div class="score-item people-score">
-    <h3 class="score-subheading">
-      👥 People & Skills: 3/5 – Developing
-    </h3>
-    <div class="score-description">
-      Your workforce exhibits <strong>Developing</strong> AI capability, indicating how prepared your team is to leverage AI tools effectively.
-    </div>
-    <div class="industry-context">
-      70% of business leaders report skills gaps limiting growth, with only 12% of IT professionals actually possessing AI skills despite widespread adoption. [Springboard 2024, Deloitte 2024]
-    </div>
-  </div>
-
-  <!-- Tools & Integration -->
-  <div class="score-item tools-score">
-    <h3 class="score-subheading">
-      🛠️ Tools & Integration: 2/5 – Emerging
-    </h3>
-    <div class="score-description">
-      Your technical infrastructure rates as <strong>Emerging</strong> for AI implementation. This evaluates not just the tools you’ve adopted, but how seamlessly they work together.
-    </div>
-    <div class="industry-context">
-      Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]
-    </div>
-  </div>
-
-  <!-- Data Readiness -->
-  <div class="score-item data-score">
-    <h3 class="score-subheading">
-      📊 Data Readiness: 3/5 – Developing
-    </h3>
-    <div class="score-description">
-      Your data foundation measures <strong>Developing</strong> for all applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.
-    </div>
-    <div class="industry-context">
-      96% of organizations experience data quality issues in AI projects, with only 18% having clear strategies. [Forrester/PwC 2024, McKinsey 2024]
-    </div>
-  </div>
-
-  <!-- Ethics & Governance -->
-  <div class="score-item ethics-score">
-    <h3 class="score-subheading">
-      🧭 Ethics & Governance: 4/5 – Advanced
-    </h3>
-    <div class="score-description">
-      Your approach to responsible AI practices achieves <strong>Advanced</strong> maturity, encompassing policies, oversight mechanisms, and cultural practices.
-    </div>
-    <div class="industry-context">
-      Only 18% have implemented policies, and just 21% have fully operationalized responsible AI across their orgs. [McKinsey 2024, Accenture 2024]
-    </div>
-  </div>
-
-</div>
-
-      <div style="margin-top: 18px; padding: 10px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 6px; font-size: 11px; color: #6c757d; font-style: italic; text-align: center;">
+      <div class="section-card citation" style="margin-top: 18px; padding: 10px; background: none; border-radius: 6px; text-align: center;">
         Industry insights: McKinsey Global AI Survey 2024, Deloitte State of AI 2024, Accenture AI Maturity Research 2024, PwC Responsible AI Survey 2024
       </div>
-    </div>
 
-    <!-- Page Break -->
-    <div class="page-break"></div>
-    <!-- Personalized Insights -->
-    <section class="section-header" role="region" aria-labelledby="personalized-insights">
-      <span class="icon" aria-hidden="true">💡</span>
-      <h2 id="personalized-insights" class="section-title">Your Personalized Insights</h2>
-    </section>
-
-    <div class="insights-section">
+      <!-- Page Break -->
+      <div class="page-break"></div>
+      <!-- Personalized Insights -->
+      <section class="section-header section-card" aria-labelledby="personalized-insights">
+        <span class="icon" aria-hidden="true">💡</span>
+        <h2 id="personalized-insights" class="section-title">Your Personalized Insights</h2>
+      </section>
+      <div class="section-card insights-section">
   <div class="priorities-challenges">
     <h3>Your AI Priorities & Challenges</h3>
     <p style="margin-bottom: 12px;"><strong>Based on your assessment responses, here's what you told us:</strong></p>
@@ -261,40 +256,38 @@
   </div>
 </div>
 
-      <div class="cta-section">
+      <div class="section-card cta-section">
         <h3>🚀 Ready to Accelerate Your AI Journey?</h3>
-       <p>
-  Your assessment reveals significant potential, but also complex challenges that require strategic navigation. The gap between your perceived <strong>Advanced</strong> and actual <strong>Developing</strong> maturity highlights opportunities to drive strategic change.
-</p>
-
+        <p>
+          Your assessment reveals significant potential, but also complex challenges that require strategic navigation. The gap between your perceived <strong>Advanced</strong> and actual <strong>Developing</strong> maturity highlights opportunities to drive strategic change.
+        </p>
         <h4>📞 Book Your Free AI Strategy Session</h4>
         <a href="https://calendly.com/tony-braveconcept-4qek/30min" class="cta-button">Book Your Free 30-Minute Strategy Session</a>
-
         <p><strong>Get personalized guidance from Brave Concept AI experts who can help you:</strong></p>
-       <ul>
-  <li>Develop a clear 90-day AI implementation plan</li>
-  <li>Navigate the specific challenges you identified</li>
-  <li>Leverage your <strong>Strategy & Planning</strong> to drive quick wins</li>
-  <li>Address your <strong>Tools & Integration</strong> systematically</li>
-</ul>
+        <ul>
+          <li>Develop a clear 90-day AI implementation plan</li>
+          <li>Navigate the specific challenges you identified</li>
+          <li>Leverage your <strong>Strategy & Planning</strong> to drive quick wins</li>
+          <li>Address your <strong>Tools & Integration</strong> systematically</li>
+        </ul>
       </div>
-    </div>
-    <!-- Contact Information -->
-    <div class="contact-info">
-      <div class="contact-item">📧 <strong>Email:</strong> info@braveconcept.ai</div>
-      <div class="contact-item">💬 <strong>AI Assistant:</strong> Ask BellaBot at braveconcept.ai</div>
-      <div class="contact-item">🌐 <strong>Website:</strong> braveconcept.ai</div>
-      <div class="contact-item">📞 <strong>Phone:</strong> (802) 560-8669</div>
-      <div class="margin-top-12 center-align bold-text">
-        Ready to get started? Schedule your complimentary consultation above.
+
+      <!-- Contact Information -->
+      <div class="section-card contact-info">
+        <div class="contact-item">📧 <strong>Email:</strong> info@braveconcept.ai</div>
+        <div class="contact-item">💬 <strong>AI Assistant:</strong> Ask BellaBot at braveconcept.ai</div>
+        <div class="contact-item">🌐 <strong>Website:</strong> braveconcept.ai</div>
+        <div class="contact-item">📞 <strong>Phone:</strong> (802) 560-8669</div>
+        <div class="margin-top-12 center-align bold-text">
+          Ready to get started? Schedule your complimentary consultation above.
+        </div>
       </div>
-    </div>
-  <div style="text-align: center; margin: 20px;">
-  <div style="text-align: center; margin-top: 40px;">
-  <button onclick="generatePDF()" aria-label="Download a PDF copy of your report">📄 Download This Report</button>
-</div>
-  
-</main>
+      <div style="text-align: center; margin: 20px;">
+        <div style="text-align: center; margin-top: 40px;">
+          <button onclick="generatePDF()" aria-label="Download a PDF copy of your report">📄 Download This Report</button>
+        </div>
+      </div>
+    </main>
 <script>
   const params = new URLSearchParams(window.location.search);
   [
@@ -350,5 +343,55 @@ function generatePDF() {
     btn.addEventListener('click', () => btn.blur())
   );
 </script>
+<script>
+  document.getElementById('download-html').addEventListener('click', function() {
+    const element = document.getElementById('main-content');
+    const html = element.outerHTML;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'ai-maturity-report.html';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  });
+</script>
+<script>
+// Download HTML as file if not present on server
+const downloadBtn = document.getElementById('download-html');
+downloadBtn.addEventListener('click', function(e) {
+  e.preventDefault();
+  // Get the current HTML content
+  const htmlContent = document.documentElement.outerHTML;
+  const blob = new Blob([htmlContent], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  downloadBtn.href = url;
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+});
+</script>
+
+<script>
+// Center-align the CTA button and ensure it uses .cta-button
+const ctaBtn = document.querySelector('.cta-section a[href*="calendly"]');
+if (ctaBtn) {
+  ctaBtn.classList.add('cta-button');
+  ctaBtn.style.display = 'inline-block';
+  ctaBtn.style.margin = '0 auto';
+  ctaBtn.style.textAlign = 'center';
+}
+</script>
 </body>
 </html>
+<footer class="validation-footer">
+  <div class="validation-badges">
+    <a href="https://validator.w3.org/check/referer">
+      <img src="https://www.w3.org/html/logo/badge/html5-badge-h-solo.png" width="31" height="32" alt="Valid HTML5!">
+    </a>
+    &nbsp;
+    <a href="https://jigsaw.w3.org/css-validator/check/referer">
+      <img src="https://jigsaw.w3.org/css-validator/images/vcss-blue" width="88" height="31" alt="Valid CSS!">
+    </a>
+  </div>
+</footer>
