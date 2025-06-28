@@ -4,26 +4,23 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI Maturity Assessment Report - Brave Concept AI</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://raw.githack.com/eKoopmans/html2pdf/master/dist/html2pdf.bundle.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <meta name="color-scheme" content="light dark">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
   <a href="#main-content" class="skip-nav">Skip to main content</a>
   <header class="header" role="banner">
   <div class="logo-section">
-    <img src="bc-logo.png" alt="Brave Concept Logo" class="logo-image" />
+    <img src="brave-logo.png" alt="Brave Concept Logo" class="logo-image" />
     <div class="company-name">BRAVE CONCEPT AI</div>
   </div>
   <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
   <div class="right-align margin-top-10">
-    <button onclick="generatePDF()" class="download-button" aria-label="Download a PDF copy of your AI Maturity Assessment Report">
-      <span aria-hidden="true">📄</span>
-      <span class="sr-only">Download a PDF copy of your AI Maturity Assessment Report</span>
-      <span aria-hidden="true">Download This Report</span>
-    </button>
+    <a href="ai-maturity-report.pdf" download class="download-button">Download This Report</a>
   </div>
   <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
 </header>
@@ -81,53 +78,68 @@
 
 <div class="scorecard-container" role="group" aria-label="AI capability scores">
   <!-- Strategy -->
-  <div class="scorecard strategy" role="article" aria-labelledby="strategy-heading">
-    <h2 class="scorecard-heading">Strategy & Planning</h2>
-    <div class="scorecard-score" aria-label="Score">4 out of 5</div>
-    <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-      <div class="scorecard-fill" data-score="4"></div>
+  <div class="section-card">
+    <div class="scorecard strategy" role="article" aria-labelledby="strategy-heading">
+      <span class="icon" aria-hidden="true">🧠</span>
+      <h2 class="scorecard-heading">Strategy & Planning</h2>
+      <div class="scorecard-score" aria-label="Score">4 out of 5</div>
+      <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+        <div class="scorecard-fill" data-score="4"></div>
+      </div>
+      <div class="scorecard-level">Advanced</div>
     </div>
-    <div class="scorecard-level">Advanced</div>
   </div>
 
   <!-- People -->
-  <div class="scorecard people" role="article" aria-labelledby="people-heading">
-    <h2 class="scorecard-heading">People & Skills</h2>
-    <div class="scorecard-score" aria-label="Score">3 out of 5</div>
-    <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-      <div class="scorecard-fill" data-score="3"></div>
+  <div class="section-card">
+    <div class="scorecard people" role="article" aria-labelledby="people-heading">
+      <span class="icon" aria-hidden="true">👥</span>
+      <h2 class="scorecard-heading">People & Skills</h2>
+      <div class="scorecard-score" aria-label="Score">3 out of 5</div>
+      <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+        <div class="scorecard-fill" data-score="3"></div>
+      </div>
+      <div class="scorecard-level">Developing</div>
     </div>
-    <div class="scorecard-level">Developing</div>
   </div>
 
   <!-- Tools -->
-  <div class="scorecard tools" role="article" aria-labelledby="tools-heading">
-    <h2 class="scorecard-heading">Tools & Integration</h2>
-    <div class="scorecard-score" aria-label="Score">2 out of 5</div>
-    <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
-      <div class="scorecard-fill" data-score="2"></div>
+  <div class="section-card">
+    <div class="scorecard tools" role="article" aria-labelledby="tools-heading">
+      <span class="icon" aria-hidden="true">🛠️</span>
+      <h2 class="scorecard-heading">Tools & Integration</h2>
+      <div class="scorecard-score" aria-label="Score">2 out of 5</div>
+      <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
+        <div class="scorecard-fill" data-score="2"></div>
+      </div>
+      <div class="scorecard-level">Emerging</div>
     </div>
-    <div class="scorecard-level">Emerging</div>
   </div>
 
   <!-- Data -->
-  <div class="scorecard data" role="article" aria-labelledby="data-heading">
-    <h2 class="scorecard-heading">Data Readiness</h2>
-    <div class="scorecard-score" aria-label="Score">3 out of 5</div>
-    <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-      <div class="scorecard-fill" data-score="3"></div>
+  <div class="section-card">
+    <div class="scorecard data" role="article" aria-labelledby="data-heading">
+      <span class="icon" aria-hidden="true">📊</span>
+      <h2 class="scorecard-heading">Data Readiness</h2>
+      <div class="scorecard-score" aria-label="Score">3 out of 5</div>
+      <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+        <div class="scorecard-fill" data-score="3"></div>
+      </div>
+      <div class="scorecard-level">Developing</div>
     </div>
-    <div class="scorecard-level">Developing</div>
   </div>
 
   <!-- Ethics -->
-  <div class="scorecard ethics" role="article" aria-labelledby="ethics-heading">
-    <h2 class="scorecard-heading">Ethics & Governance</h2>
-    <div class="scorecard-score" aria-label="Score">4 out of 5</div>
-    <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-      <div class="scorecard-fill" data-score="4"></div>
+  <div class="section-card">
+    <div class="scorecard ethics" role="article" aria-labelledby="ethics-heading">
+      <span class="icon" aria-hidden="true">🧭</span>
+      <h2 class="scorecard-heading">Ethics & Governance</h2>
+      <div class="scorecard-score" aria-label="Score">4 out of 5</div>
+      <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+        <div class="scorecard-fill" data-score="4"></div>
+      </div>
+      <div class="scorecard-level">Advanced</div>
     </div>
-    <div class="scorecard-level">Advanced</div>
   </div>
 </div>
 
@@ -317,6 +329,26 @@
     }
   }
   window.addEventListener('keydown', handleFirstTab);
+</script>
+<script>
+function generatePDF() {
+  const element = document.body;
+  html2pdf()
+    .set({
+      margin: 0,
+      filename: 'ai-maturity-report.pdf',
+      image: { type: 'jpeg', quality: 0.98 },
+      html2canvas: { scale: 2 },
+      jsPDF: { unit: 'in', format: 'letter', orientation: 'portrait' }
+    })
+    .from(element)
+    .save();
+}
+</script>
+<script>
+  document.querySelectorAll('.download-button').forEach(btn =>
+    btn.addEventListener('click', () => btn.blur())
+  );
 </script>
 </body>
 </html>
