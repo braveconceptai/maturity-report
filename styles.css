@@ -2,12 +2,12 @@
    Brand Colors & Gradients
    =============================== */
 :root {
-  --primary-blue: #0056b3;
-  --secondary-blue: #e2e6ea;
-  --accent-gradient: linear-gradient(90deg, #0056b3 0%, #3a8dde 100%);
-  --header-gradient: linear-gradient(90deg, #0056b3 0%, #e2e6ea 100%);
-  --button-gradient: linear-gradient(90deg, #0056b3 0%, #3a8dde 100%);
-  --section-gradient: linear-gradient(135deg, #e2e6ea 0%, #f8f9fa 100%);
+  --primary-blue: #006241;
+  --secondary-blue: #e4f0e2;
+  --accent-gradient: linear-gradient(90deg, #006241 0%, #5ec576 100%);
+  --header-gradient: linear-gradient(90deg, #006241 0%, #cdebc6 100%);
+  --button-gradient: linear-gradient(90deg, #006241 0%, #5ec576 100%);
+  --section-gradient: linear-gradient(135deg, #f0fdf4 0%, #d9fbe5 100%);
   --transition: background 0.4s cubic-bezier(.4,0,.2,1), color 0.4s cubic-bezier(.4,0,.2,1);
 }
 
@@ -212,6 +212,50 @@ header, .scorecard-heading, .section-title {
   opacity: 0.8;
 }
 
+/* Emoji inline alignment for headings and labels */
+.scorecard-heading, .score-subheading, .section-title, h3, h4, .findings-list, .cta-section h4 {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
+/* Emoji direct child of headings */
+.scorecard-heading > .emoji, .score-subheading > .emoji, .section-title > .emoji, h3 > .emoji, h4 > .emoji, .findings-list > .emoji, .cta-section h4 > .emoji,
+.scorecard-heading > span[aria-hidden="true"], .score-subheading > span[aria-hidden="true"], .section-title > span[aria-hidden="true"], h3 > span[aria-hidden="true"], h4 > span[aria-hidden="true"], .findings-list > span[aria-hidden="true"], .cta-section h4 > span[aria-hidden="true"] {
+  margin-right: 0;
+}
+
+.scorecard-heading {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.18rem;
+  font-weight: 700;
+  margin: 0 0 10px 0;
+  padding: 0 0 4px 0;
+  line-height: 1.2;
+  color: var(--primary-blue);
+  background: none;
+}
+
+/* Emoji direct child of scorecard-heading */
+.scorecard-heading > .emoji, .scorecard-heading > span[aria-hidden="true"] {
+  margin-right: 0;
+  font-size: 1.25em;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Accessibility: Ensure .scorecard blocks are regions with labels and headings use proper roles */
+.scorecard[role="region"] {
+  /* No visual changes, just for documentation */
+}
+.scorecard h2[role="heading"][aria-level="2"] {
+  /* No visual changes, just for documentation */
+}
+
 @media (max-width: 600px) {
   .header {
     padding: 28px 4vw 20px 4vw;
@@ -230,11 +274,35 @@ header, .scorecard-heading, .section-title {
 @media (max-width: 768px) {
   .scorecard-container {
     flex-direction: column;
-    gap: 18px;
+    gap: 12px;
   }
   .section-card {
     width: 100%;
     min-width: 0;
+    margin-bottom: 10px;
+    padding: 8px 4px;
+    box-sizing: border-box;
+  }
+  .scorecard-heading {
+    width: 100%;
+    font-size: 1.08rem;
+    padding: 0 0 2px 0;
+    margin-bottom: 4px;
+    line-height: 1.15;
+    word-break: break-word;
+  }
+  .scorecard-score {
+    width: 100%;
+    font-size: 0.98rem;
+    margin-bottom: 2px;
+    line-height: 1.1;
+  }
+  .scorecard-bar {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    margin-bottom: 2px;
+    overflow: hidden;
   }
 }
 
@@ -247,4 +315,30 @@ header, .scorecard-heading, .section-title {
 .validation-badges a {
   display: inline-block;
   margin: 0 8px;
+}
+
+@media print {
+  /* Start major sections on new pages */
+  .page-break, .section-header, #personalized-insights {
+    page-break-before: always;
+    break-before: page;
+  }
+  .section-card, .scorecard-container > div {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  /* Hide interactive elements in print */
+  .download-button, .header-actions, button[onclick], a.download-button, .validation-footer {
+    display: none !important;
+  }
+  /* Remove box-shadows and backgrounds for print clarity */
+  .section-card, .scorecard-heading, .section-title, .section-header, header {
+    box-shadow: none !important;
+    background: #fff !important;
+    color: #000 !important;
+  }
+  body {
+    background: #fff !important;
+    color: #000 !important;
+  }
 }
