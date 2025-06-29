@@ -288,7 +288,8 @@
       <span class="icon" aria-hidden="true">📋</span>
       <h2 id="report-details-heading" class="section-title">Report Details</h2>
     </section>
-    <div class="report-details">
+    <div class="report-details" aria-describedby="report-details-desc">
+      <div id="report-details-desc" class="sr-only">This section contains the recipient, company, industry, date, and report ID for this AI maturity assessment.</div>
       <div class="detail-item"><span class="detail-label">Prepared for:</span> <span id="respondent_name">Alex Johnson</span></div>
       <div class="detail-item"><span class="detail-label">Company:</span> <span id="organization">Acme Corp</span></div>
       <div class="detail-item"><span class="detail-label">Industry:</span> <span id="industry">Technology</span></div>
@@ -301,7 +302,8 @@
         <span class="icon" aria-hidden="true">📈</span>
         <h2 id="maturity-snapshot-heading" class="section-title">Your AI Maturity Snapshot</h2>
       </section>
-      <div class="section-card maturity-snapshot">
+      <div class="section-card maturity-snapshot" aria-describedby="maturity-snapshot-desc">
+        <div id="maturity-snapshot-desc" class="sr-only">This section summarizes your perceived and data-driven AI maturity levels, including descriptions and levels.</div>
         <div class="perceived-maturity">
           <div class="maturity-label">Your Perceived AI Maturity</div>
           <div class="maturity-value"><span id="perceived_maturity">4</span></div>
@@ -321,7 +323,8 @@
       </div>
 
       <!-- Key Findings -->
-      <div class="section-card key-findings">
+      <div class="section-card key-findings" aria-describedby="key-findings-desc">
+        <div id="key-findings-desc" class="sr-only">Key findings highlight your strongest area, growth opportunity, and current phase of AI maturity.</div>
         <h3 class="findings-list section-header">Key Findings</h3>
         <strong>Strongest Area:</strong> <span id="strongest_area">Strategy & Planning</span><br>
         <strong>Growth Opportunity:</strong> <span id="growth_opportunity">Data Readiness</span><br>
@@ -335,57 +338,69 @@
         <h2 id="capability-profile" class="section-title">Your AI Capability Profile</h2>
       </section>
 
-      <div class="scorecard-container" role="group" aria-label="AI capability scores">
+      <div class="scorecard-container" role="group" aria-label="AI capability scores" aria-describedby="scorecard-desc">
+        <div id="scorecard-desc" class="sr-only">Each scorecard below shows your score and maturity level for a specific AI capability area.</div>
         <!-- Strategy -->
-        <div class="scorecard strategy" role="region" aria-label="Strategy & Planning scorecard">
+        <div class="scorecard strategy" role="region" aria-label="Strategy & Planning scorecard" data-score="4" data-level="Advanced">
           <h2 class="scorecard-heading" role="heading" aria-level="2">🧠 Strategy & Planning</h2>
-          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5 <span class="stars" aria-hidden="true">★★★★</span> <span class="level-label">Advanced</span></div>
           <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
             <div class="scorecard-fill" data-score="4"></div>
+            <span class="progress-percentage">80%</span>
           </div>
           <div class="scorecard-level">Advanced</div>
         </div>
         <!-- People -->
-        <div class="scorecard people" role="region" aria-label="People & Skills scorecard">
+        <div class="scorecard people" role="region" aria-label="People & Skills scorecard" data-score="3" data-level="Developing">
           <h2 class="scorecard-heading" role="heading" aria-level="2">👥 People & Skills</h2>
-          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5 <span class="stars" aria-hidden="true">★★★</span> <span class="level-label">Developing</span></div>
           <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
             <div class="scorecard-fill" data-score="3"></div>
+            <span class="progress-percentage">60%</span>
           </div>
           <div class="scorecard-level">Developing</div>
         </div>
         <!-- Tools -->
-        <div class="scorecard tools" role="region" aria-label="Tools & Integration scorecard">
+        <div class="scorecard tools" role="region" aria-label="Tools & Integration scorecard" data-score="2" data-level="Emerging">
           <h2 class="scorecard-heading" role="heading" aria-level="2">🛠️ Tools & Integration</h2>
-          <div class="scorecard-score"><span class="sr-only">Score: </span>2 out of 5</div>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>2 out of 5 <span class="stars" aria-hidden="true">★★</span> <span class="level-label">Emerging</span></div>
           <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
             <div class="scorecard-fill" data-score="2"></div>
+            <span class="progress-percentage">40%</span>
           </div>
           <div class="scorecard-level">Emerging</div>
         </div>
         <!-- Data -->
-        <div class="scorecard data" role="region" aria-label="Data Readiness scorecard">
+        <div class="scorecard data" role="region" aria-label="Data Readiness scorecard" data-score="3" data-level="Developing">
           <h2 class="scorecard-heading" role="heading" aria-level="2">📊 Data Readiness</h2>
-          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5 <span class="stars" aria-hidden="true">★★★</span> <span class="level-label">Developing</span></div>
           <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
             <div class="scorecard-fill" data-score="3"></div>
+            <span class="progress-percentage">60%</span>
           </div>
           <div class="scorecard-level">Developing</div>
         </div>
         <!-- Ethics -->
-        <div class="scorecard ethics" role="region" aria-label="Ethics & Governance scorecard">
+        <div class="scorecard ethics" role="region" aria-label="Ethics & Governance scorecard" data-score="4" data-level="Advanced">
           <h2 class="scorecard-heading" role="heading" aria-level="2">🧭 Ethics & Governance</h2>
-          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5 <span class="stars" aria-hidden="true">★★★★</span> <span class="level-label">Advanced</span></div>
           <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
             <div class="scorecard-fill" data-score="4"></div>
+            <span class="progress-percentage">80%</span>
           </div>
           <div class="scorecard-level">Advanced</div>
         </div>
       </div>
-
-      <p class="centered-subtext">
-        Your scores across all AI maturity dimensions
-      </p>
+      <div class="scorecard-legend" role="complementary" aria-label="Scorecard color guide">
+        <h3>Scorecard Categories:</h3>
+        <ul>
+          <li><span class="legend-color strategy"></span> Blue - Strategy & Planning</li>
+          <li><span class="legend-color people"></span> Green - People & Skills</li>
+          <li><span class="legend-color tools"></span> Orange - Tools & Integration</li>
+          <li><span class="legend-color data"></span> Pink - Data Readiness</li>
+          <li><span class="legend-color ethics"></span> Purple - Ethics & Governance</li>
+        </ul>
+      </div>
 
       <!-- Page Break -->
       <div class="page-break"></div>
@@ -394,7 +409,8 @@
         <span class="section-header-overlay"></span>
         <h2 class="section-title">🧠 Detailed Score Analysis</h2>
       </section>
-      <div class="section-card score-analysis">
+      <div class="section-card score-analysis" aria-describedby="score-analysis-desc">
+        <div id="score-analysis-desc" class="sr-only">Detailed analysis of your scores in each AI maturity dimension, with industry context.</div>
 
         <!-- Strategy -->
         <div class="score-item strategy-score">
@@ -464,7 +480,8 @@
         <span class="section-header-overlay"></span>
         <h2 id="personalized-insights" class="section-title">💡 Your Personalized Insights</h2>
       </section>
-      <div class="section-card insights-section">
+      <div class="section-card insights-section" aria-describedby="insights-section-desc">
+        <div id="insights-section-desc" class="sr-only">Personalized insights, priorities, challenges, and recommendations based on your assessment responses.</div>
   <div class="priorities-challenges">
     <h3>Your AI Priorities & Challenges</h3>
     <p style="margin-bottom: 12px;"><strong>Based on your assessment responses, here's what you told us:</strong></p>
@@ -488,7 +505,8 @@
   </div>
 </div>
 
-      <div class="section-card cta-section">
+      <div class="section-card cta-section" aria-describedby="cta-section-desc">
+        <div id="cta-section-desc" class="sr-only">Call to action for booking a free AI strategy session and next steps.</div>
         <h3>🚀 Ready to Accelerate Your AI Journey?</h3>
         <p>
           Your assessment reveals significant potential, but also complex challenges that require strategic navigation. The gap between your perceived <strong>Advanced</strong> and actual <strong>Developing</strong> maturity highlights opportunities to drive strategic change.
@@ -505,7 +523,8 @@
       </div>
 
       <!-- Contact Information -->
-      <div class="section-card contact-info">
+      <div class="section-card contact-info" aria-describedby="contact-info-desc">
+        <div id="contact-info-desc" class="sr-only">Contact information for Brave Concept AI, including email, website, and phone.</div>
         <h2 class="section-title"><span class="section-header-overlay"></span>Contact Information</h2>
         <div class="contact-item">📧 <strong>Email:</strong> info@braveconcept.ai</div>
         <div class="contact-item">💬 <strong>AI Assistant:</strong> Ask BellaBot at braveconcept.ai</div>
