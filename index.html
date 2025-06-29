@@ -15,8 +15,8 @@
   <a href="#main-content" class="skip-nav">Skip to main content</a>
   <header class="header">
     <div class="header-content">
-      <div class="company-name">BRAVE CONCEPT AI</div>
       <img src="bc-logo.png" alt="Brave Concept Logo" class="logo-image">
+      <div class="company-name">BRAVE CONCEPT AI</div>
       <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
       <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
       <div class="header-actions">
@@ -364,6 +364,47 @@ if (ctaBtn) {
   ctaBtn.style.margin = '0 auto';
   ctaBtn.style.textAlign = 'center';
 }
+</script>
+<script>
+// Dynamically update scorecard colors and progress bar widths from URL params (Zapier compatible)
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const categoryColors = {
+    strategy: {
+      gradient: 'var(--strategy-blue-gradient)',
+      solid: '#1976d2'
+    },
+    people: {
+      gradient: 'var(--people-green-gradient)',
+      solid: '#43a047'
+    },
+    tools: {
+      gradient: 'var(--tools-orange-gradient)',
+      solid: '#ff9800'
+    },
+    data: {
+      gradient: 'var(--data-pink-gradient)',
+      solid: '#ec407a'
+    },
+    ethics: {
+      gradient: 'var(--ethics-purple-gradient)',
+      solid: '#8e24aa'
+    }
+  };
+  // Set progress bar widths and colors
+  document.querySelectorAll('.scorecard').forEach(card => {
+    const cat = Array.from(card.classList).find(c => categoryColors[c]);
+    if (!cat) return;
+    const fill = card.querySelector('.scorecard-fill');
+    const bar = card.querySelector('.scorecard-bar');
+    // Set color gradient
+    if (fill) fill.style.background = categoryColors[cat].gradient;
+    // Set width from data-score or URL param
+    let score = fill && fill.getAttribute('data-score');
+    if (params.has(cat + '_score')) score = params.get(cat + '_score');
+    if (score && fill) fill.style.width = `calc(${score} * 20%)`;
+  });
+})();
 </script>
 </body>
 </html>

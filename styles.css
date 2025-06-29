@@ -9,6 +9,48 @@
   --button-gradient: linear-gradient(90deg, #006241 0%, #5ec576 100%);
   --section-gradient: linear-gradient(135deg, #f0fdf4 0%, #d9fbe5 100%);
   --transition: background 0.4s cubic-bezier(.4,0,.2,1), color 0.4s cubic-bezier(.4,0,.2,1);
+
+  /* Scorecard category color system */
+  --strategy-blue: #1976d2;
+  --strategy-blue-light: #64b5f6;
+  --strategy-blue-gradient: linear-gradient(90deg, var(--strategy-blue) 0%, var(--strategy-blue-light) 100%);
+  --strategy-blue-hover: #1565c0;
+  --strategy-blue-hover-gradient: linear-gradient(90deg, var(--strategy-blue-hover) 0%, #42a5f5 100%);
+
+  --people-green: #43a047;
+  --people-green-light: #a5d6a7;
+  --people-green-gradient: linear-gradient(90deg, var(--people-green) 0%, var(--people-green-light) 100%);
+  --people-green-hover: #388e3c;
+  --people-green-hover-gradient: linear-gradient(90deg, var(--people-green-hover) 0%, #81c784 100%);
+
+  --tools-orange: #ff9800;
+  --tools-orange-light: #ffd54f;
+  --tools-orange-gradient: linear-gradient(90deg, var(--tools-orange) 0%, var(--tools-orange-light) 100%);
+  --tools-orange-hover: #f57c00;
+  --tools-orange-hover-gradient: linear-gradient(90deg, var(--tools-orange-hover) 0%, #ffb300 100%);
+
+  --data-pink: #ec407a;
+  --data-pink-light: #f8bbd0;
+  --data-pink-gradient: linear-gradient(90deg, var(--data-pink) 0%, var(--data-pink-light) 100%);
+  --data-pink-hover: #d81b60;
+  --data-pink-hover-gradient: linear-gradient(90deg, var(--data-pink-hover) 0%, #f06292 100%);
+
+  --ethics-purple: #8e24aa;
+  --ethics-purple-light: #ce93d8;
+  --ethics-purple-gradient: linear-gradient(90deg, var(--ethics-purple) 0%, var(--ethics-purple-light) 100%);
+  --ethics-purple-hover: #6a1b9a;
+  --ethics-purple-hover-gradient: linear-gradient(90deg, var(--ethics-purple-hover) 0%, #ab47bc 100%);
+  
+  /* Consolidated section gradients for performance */
+  --header-gradient-brand: linear-gradient(90deg, #003a75 0%, #0056b3 100%);
+  --section-gradient-green: linear-gradient(90deg, #43a047 0%, #a5d6a7 100%);
+  --section-gradient-blue: linear-gradient(90deg, #64b5f6 0%, #cdebc6 100%);
+  --section-gradient-yellowblue: linear-gradient(90deg, #ffe082 0%, #64b5f6 100%);
+  --section-gradient-orange: linear-gradient(90deg, #ffb74d 0%, #ffe0b2 100%);
+  --section-gradient-lightblue: linear-gradient(90deg, #e3f2fd 0%, #b3e5fc 100%);
+  --section-gradient-pink: linear-gradient(90deg, #f8bbd0 0%, #ffe0b2 100%);
+  --section-gradient-purple: linear-gradient(90deg, #fffde7 0%, #e1bee7 100%);
+  --section-gradient-default: linear-gradient(90deg, #f0fdf4 0%, #d9fbe5 100%);
 }
 
 body {
@@ -139,7 +181,7 @@ header, .scorecard-heading, .section-title {
 }
 
 .header {
-  background: #003a75;
+  background: var(--header-gradient-brand);
   color: #fff;
   padding: 40px 16px 32px 16px;
   width: 100%;
@@ -158,16 +200,18 @@ header, .scorecard-heading, .section-title {
 }
 
 .logo-image {
+  display: block;
   max-width: 160px;
   height: auto;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
+  margin-top: 0;
 }
 
 .main-title {
   font-size: 2.1rem;
   font-weight: 800;
   letter-spacing: 1px;
-  margin: 0 0 4px 0;
+  margin: 0 0 10px 0;
   text-align: center;
 }
 
@@ -175,7 +219,8 @@ header, .scorecard-heading, .section-title {
   font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 2px;
-  margin-top: 8px;
+  margin-top: 6px;
+  margin-bottom: 10px;
   text-align: center;
   opacity: 0.85;
 }
@@ -306,6 +351,42 @@ header, .scorecard-heading, .section-title {
   }
 }
 
+/* Scorecard progress bar color themes by category */
+.scorecard.strategy .scorecard-fill {
+  background: var(--strategy-blue-gradient);
+}
+.scorecard.strategy .scorecard-bar:hover .scorecard-fill {
+  background: var(--strategy-blue-hover-gradient);
+}
+
+.scorecard.people .scorecard-fill {
+  background: var(--people-green-gradient);
+}
+.scorecard.people .scorecard-bar:hover .scorecard-fill {
+  background: var(--people-green-hover-gradient);
+}
+
+.scorecard.tools .scorecard-fill {
+  background: var(--tools-orange-gradient);
+}
+.scorecard.tools .scorecard-bar:hover .scorecard-fill {
+  background: var(--tools-orange-hover-gradient);
+}
+
+.scorecard.data .scorecard-fill {
+  background: var(--data-pink-gradient);
+}
+.scorecard.data .scorecard-bar:hover .scorecard-fill {
+  background: var(--data-pink-hover-gradient);
+}
+
+.scorecard.ethics .scorecard-fill {
+  background: var(--ethics-purple-gradient);
+}
+.scorecard.ethics .scorecard-bar:hover .scorecard-fill {
+  background: var(--ethics-purple-hover-gradient);
+}
+
 .validation-footer {
   text-align: center;
   font-size: 12px;
@@ -341,4 +422,60 @@ header, .scorecard-heading, .section-title {
     background: #fff !important;
     color: #000 !important;
   }
+  @page {
+    size: A4 portrait;
+    margin: 1.2cm;
+    background: #fff;
+  }
+  .section-card, .scorecard-heading, .section-title, .section-header, header {
+    background: #fff !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    border: 1px solid #e0e0e0 !important;
+  }
+  .section-header.section-card {
+    border-top: 4px solid #006241 !important;
+  }
+  .maturity-snapshot.section-card {
+    border-left: 4px solid #1976d2 !important;
+  }
+  .key-findings.section-card {
+    border-left: 4px solid #ff9800 !important;
+  }
+  .cta-section.section-card {
+    border-left: 4px solid #43a047 !important;
+  }
+  .contact-info.section-card {
+    border-left: 4px solid #1976d2 !important;
+  }
+  .insights-section.section-card {
+    border-left: 4px solid #ec407a !important;
+  }
+  .citation.section-card {
+    border-left: 4px solid #8e24aa !important;
+  }
+  .score-analysis.section-card {
+    border-left: 4px solid #006241 !important;
+  }
+  .scorecard-bar, .scorecard-fill {
+    background: #e0e0e0 !important;
+    border-radius: 2px !important;
+  }
+  .scorecard-fill {
+    background: #1976d2 !important;
+  }
+  .scorecard.strategy .scorecard-fill { background: #1976d2 !important; }
+  .scorecard.people .scorecard-fill { background: #43a047 !important; }
+  .scorecard.tools .scorecard-fill { background: #ff9800 !important; }
+  .scorecard.data .scorecard-fill { background: #ec407a !important; }
+  .scorecard.ethics .scorecard-fill { background: #8e24aa !important; }
+  .section-card, .scorecard-heading, .section-title, .section-header, header {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}
+
+/* Ensure text contrast on gradients for screen and PDF */
+.section-card, .section-header.section-card, .maturity-snapshot.section-card, .key-findings.section-card, .cta-section.section-card, .contact-info.section-card, .score-analysis.section-card, .insights-section.section-card, .citation.section-card {
+  text-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
