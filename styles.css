@@ -479,3 +479,62 @@ header, .scorecard-heading, .section-title {
 .section-card, .section-header.section-card, .maturity-snapshot.section-card, .key-findings.section-card, .cta-section.section-card, .contact-info.section-card, .score-analysis.section-card, .insights-section.section-card, .citation.section-card {
   text-shadow: 0 1px 2px rgba(0,0,0,0.04);
 }
+
+/* Enhanced text-shadow for readability on colored backgrounds */
+h1, h2, h3 {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+.scorecard-score, .scorecard-level {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7) !important;
+}
+.scorecard-bar[role="progressbar"]::before, .scorecard-bar .progress-label, .scorecard-fill .progress-label {
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6) !important;
+}
+.section-header, .section-header .section-title, .section-header h2, .section-header h3, .section-header .icon {
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important;
+}
+/* Ensure scorecard-heading and key text on gradients get the correct shadow */
+.scorecard-heading, .scorecard-score, .scorecard-level {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7) !important;
+}
+/* For extra clarity, ensure .score-subheading (detailed analysis) gets heading shadow */
+.score-subheading {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* ===============================
+   Text Shadow Utility Classes
+   =============================== */
+.text-shadow-light {
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3) !important;
+}
+.text-shadow-medium {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.6) !important;
+}
+.text-shadow-heavy {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+
+/* Fallbacks for critical text elements */
+.header .main-title,
+.header .company-name,
+.header .tagline,
+.section-header .section-title,
+.section-header h2,
+.section-header h3,
+.section-header .icon {
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+}
+.scorecard-heading,
+.scorecard-score,
+.scorecard-level {
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.7) !important;
+}
+.scorecard-bar[role="progressbar"] .progress-label,
+.scorecard-fill .progress-label {
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.6) !important;
+}
+.section-card, .score-analysis.section-card, .insights-section.section-card, .key-findings.section-card, .cta-section.section-card, .contact-info.section-card, .citation.section-card {
+  /* Light shadow for text on light backgrounds */
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+}

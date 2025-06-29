@@ -14,13 +14,13 @@
   <style id="pdf-inline-styles">
     /* Brand Gradients */
     :root {
-      --strategy-blue-gradient: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
-      --people-green-gradient: linear-gradient(90deg, #43a047 0%, #66bb6a 100%);
-      --tools-orange-gradient: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);
-      --data-pink-gradient: linear-gradient(90deg, #ec407a 0%, #f06292 100%);
-      --ethics-purple-gradient: linear-gradient(90deg, #8e24aa 0%, #ba68c8 100%);
-      --header-gradient: linear-gradient(90deg, #0d1a2f 0%, #1976d2 100%);
-      --cta-gradient: linear-gradient(90deg, #1976d2 0%, #43a047 100%);
+      --strategy-blue-gradient: linear-gradient(90deg, #114a8b 0%, #2e6bb3 100%);
+      --people-green-gradient: linear-gradient(90deg, #245c2e 0%, #4e8c4a 100%);
+      --tools-orange-gradient: linear-gradient(90deg, #b36a00 0%, #cc8400 100%);
+      --data-pink-gradient: linear-gradient(90deg, #a82e5c 0%, #c94c7a 100%);
+      --ethics-purple-gradient: linear-gradient(90deg, #4e1760 0%, #7a3a8c 100%);
+      --header-gradient: linear-gradient(90deg, #0d1a2f 0%, #114a8b 100%);
+      --cta-gradient: linear-gradient(90deg, #114a8b 0%, #245c2e 100%);
       --section-bg-gradient: linear-gradient(90deg, #f5f7fa 0%, #e3ecf7 100%);
     }
     body, html {
@@ -34,40 +34,72 @@
       /* Fallback for PDF and non-supporting browsers */
       background-image: linear-gradient(90deg, #0d1a2f 0%, #1976d2 100%) !important;
       background-color: #0d1a2f !important;
+      text-shadow: 0 2px 6px #0008, 0 1px 2px #0006;
     }
-    .section-header, .section-card {
-      background: var(--section-bg-gradient) !important;
+    .header .main-title, .header .company-name, .header .tagline {
+      color: #fff !important;
+      text-shadow: 0 2px 6px #0008, 0 1px 2px #0006;
+    }
+    .section-header {
+      position: relative !important;
+      background: var(--header-gradient) !important;
+      background-image: linear-gradient(90deg, #0d1a2f 0%, #1976d2 100%) !important;
+      color: #fff !important;
       border-radius: 12px !important;
       margin-bottom: 18px !important;
       box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
-      /* Fallback for PDF and non-supporting browsers */
-      background-image: linear-gradient(90deg, #f5f7fa 0%, #e3ecf7 100%) !important;
-      background-color: #f5f7fa !important;
+      overflow: hidden !important;
+      z-index: 0;
+    }
+    .section-header::before {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 1;
+      /* Dark gradient overlay for contrast, preserves color hints */
+      background: linear-gradient(90deg, rgba(0,0,0,0.7) 0%, rgba(25,118,210,0.5) 100%);
+    }
+    .section-header .section-title,
+    .section-header h2,
+    .section-header h3,
+    .section-header .icon {
+      position: relative;
+      z-index: 2;
+      color: #fff !important;
+      text-shadow: 0 2px 6px #0008, 0 1px 2px #0006;
+    }
+    .section-card:not(.section-header) {
+      background: #f5f7fa !important;
+      color: #111 !important;
+      border-radius: 12px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
     }
     .scorecard.strategy .scorecard-fill {
       background: var(--strategy-blue-gradient) !important;
-      background-image: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%) !important;
-      background-color: #1976d2 !important;
+      background-image: linear-gradient(90deg, #114a8b 0%, #2e6bb3 100%) !important;
+      background-color: #114a8b !important;
     }
     .scorecard.people .scorecard-fill {
       background: var(--people-green-gradient) !important;
-      background-image: linear-gradient(90deg, #43a047 0%, #66bb6a 100%) !important;
-      background-color: #43a047 !important;
+      background-image: linear-gradient(90deg, #245c2e 0%, #4e8c4a 100%) !important;
+      background-color: #245c2e !important;
     }
     .scorecard.tools .scorecard-fill {
       background: var(--tools-orange-gradient) !important;
-      background-image: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%) !important;
-      background-color: #ff9800 !important;
+      background-image: linear-gradient(90deg, #b36a00 0%, #cc8400 100%) !important;
+      background-color: #b36a00 !important;
     }
     .scorecard.data .scorecard-fill {
       background: var(--data-pink-gradient) !important;
-      background-image: linear-gradient(90deg, #ec407a 0%, #f06292 100%) !important;
-      background-color: #ec407a !important;
+      background-image: linear-gradient(90deg, #a82e5c 0%, #c94c7a 100%) !important;
+      background-color: #a82e5c !important;
     }
     .scorecard.ethics .scorecard-fill {
       background: var(--ethics-purple-gradient) !important;
-      background-image: linear-gradient(90deg, #8e24aa 0%, #ba68c8 100%) !important;
-      background-color: #8e24aa !important;
+      background-image: linear-gradient(90deg, #4e1760 0%, #7a3a8c 100%) !important;
+      background-color: #4e1760 !important;
     }
     .scorecard-bar {
       background: #e0e0e0 !important;
@@ -96,6 +128,7 @@
       /* Fallback for PDF and non-supporting browsers */
       background-image: linear-gradient(90deg, #1976d2 0%, #43a047 100%) !important;
       background-color: #1976d2 !important;
+      text-shadow: 0 2px 6px #0008, 0 1px 2px #0006;
     }
     .cta-button:hover, .download-button:hover {
       filter: brightness(1.08) !important;
@@ -103,9 +136,14 @@
     }
     .key-findings, .score-analysis, .insights-section, .cta-section, .contact-info {
       background: #fff !important;
+      color: #111 !important;
       border: 1.5px solid #1976d2 !important;
       border-radius: 12px !important;
-      color: #111 !important;
+    }
+    .key-findings h3, .score-analysis h2, .insights-section h2, .cta-section h3, .contact-info h2 {
+      color: #0d1a2f !important;
+      background: none !important;
+      text-shadow: none !important;
     }
     .citation {
       background: #f5f7fa !important;
@@ -113,11 +151,9 @@
       border: 1px solid #e0e0e0 !important;
     }
     .scorecard-heading, .score-subheading {
-      display: flex !important;
-      align-items: center !important;
-      gap: 8px !important;
-      font-size: 1.1em !important;
-      font-weight: 700 !important;
+      color: #0d1a2f !important;
+      background: none !important;
+      text-shadow: none !important;
     }
     .icon, .scorecard-heading .emoji, .score-subheading .emoji {
       font-size: 1.2em !important;
@@ -132,6 +168,7 @@
         background: #fff !important;
         color: #111 !important;
         box-shadow: none !important;
+        text-shadow: none !important;
       }
       .cta-button, .download-button {
         display: none !important;
@@ -146,6 +183,87 @@
       .validation-footer {
         display: none !important;
       }
+    }
+    .scorecard.strategy {
+      position: relative;
+    }
+    .scorecard.strategy::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .scorecard.people {
+      position: relative;
+    }
+    .scorecard.people::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.35);
+      border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .scorecard.tools {
+      position: relative;
+    }
+    .scorecard.tools::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.3);
+      border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .scorecard.data {
+      position: relative;
+    }
+    .scorecard.data::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.25);
+      border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .scorecard.ethics {
+      position: relative;
+    }
+    .scorecard.ethics::after {
+      content: "";
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.4);
+      border-radius: 12px;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .scorecard-heading,
+    .scorecard-score,
+    .scorecard-level {
+      position: relative;
+      z-index: 2;
+      color: #fff !important;
+      text-shadow: 0 2px 6px #0008, 0 1px 2px #0006;
+    }
+    /* Enhanced text-shadow for readability on colored backgrounds */
+    h1, h2, h3 {
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.8) !important;
+    }
+    .scorecard-score, .scorecard-level {
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.7) !important;
+    }
+    .scorecard-bar[role="progressbar"]:before, .progress-label, .scorecard-bar-label {
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.6) !important;
+    }
+    .section-header, .section-header .section-title, .section-header h2, .section-header h3, .section-header .icon {
+      text-shadow: 2px 2px 5px rgba(0,0,0,0.9) !important;
     }
   </style>
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://raw.githack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.w3.org https://jigsaw.w3.org; script-src 'self' https://raw.githack.com;">
@@ -166,6 +284,7 @@
   </header>
   <main id="main-content" tabindex="0">
     <section class="section-header" aria-labelledby="report-details-heading">
+      <span class="section-header-overlay"></span>
       <span class="icon" aria-hidden="true">📋</span>
       <h2 id="report-details-heading" class="section-title">Report Details</h2>
     </section>
@@ -178,6 +297,7 @@
     </div>
     <!-- AI Maturity Snapshot -->
       <section class="section-header section-card" aria-labelledby="maturity-snapshot-heading">
+        <span class="section-header-overlay"></span>
         <span class="icon" aria-hidden="true">📈</span>
         <h2 id="maturity-snapshot-heading" class="section-title">Your AI Maturity Snapshot</h2>
       </section>
@@ -210,6 +330,7 @@
 
       <!-- AI Capability Profile -->
       <section class="section-header section-card" aria-labelledby="capability-profile">
+        <span class="section-header-overlay"></span>
         <span class="icon" aria-hidden="true">📊</span>
         <h2 id="capability-profile" class="section-title">Your AI Capability Profile</h2>
       </section>
@@ -270,6 +391,7 @@
       <div class="page-break"></div>
       <!-- Detailed Score Analysis -->
       <section class="section-header section-card">
+        <span class="section-header-overlay"></span>
         <h2 class="section-title">🧠 Detailed Score Analysis</h2>
       </section>
       <div class="section-card score-analysis">
@@ -339,6 +461,7 @@
       <div class="page-break"></div>
       <!-- Personalized Insights -->
       <section class="section-header section-card" aria-labelledby="personalized-insights">
+        <span class="section-header-overlay"></span>
         <h2 id="personalized-insights" class="section-title">💡 Your Personalized Insights</h2>
       </section>
       <div class="section-card insights-section">
@@ -383,6 +506,7 @@
 
       <!-- Contact Information -->
       <div class="section-card contact-info">
+        <h2 class="section-title"><span class="section-header-overlay"></span>Contact Information</h2>
         <div class="contact-item">📧 <strong>Email:</strong> info@braveconcept.ai</div>
         <div class="contact-item">💬 <strong>AI Assistant:</strong> Ask BellaBot at braveconcept.ai</div>
         <div class="contact-item">🌐 <strong>Website:</strong> braveconcept.ai</div>
