@@ -9,7 +9,147 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet">
   <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="styles.min.css">
+  <link rel="stylesheet" href="styles.min.css" id="main-css">
+  <!-- Inline PDF styles for html2pdf.js compatibility -->
+  <style id="pdf-inline-styles">
+    /* Brand Gradients */
+    :root {
+      --strategy-blue-gradient: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%);
+      --people-green-gradient: linear-gradient(90deg, #43a047 0%, #66bb6a 100%);
+      --tools-orange-gradient: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%);
+      --data-pink-gradient: linear-gradient(90deg, #ec407a 0%, #f06292 100%);
+      --ethics-purple-gradient: linear-gradient(90deg, #8e24aa 0%, #ba68c8 100%);
+      --header-gradient: linear-gradient(90deg, #0d1a2f 0%, #1976d2 100%);
+      --cta-gradient: linear-gradient(90deg, #1976d2 0%, #43a047 100%);
+      --section-bg-gradient: linear-gradient(90deg, #f5f7fa 0%, #e3ecf7 100%);
+    }
+    body, html {
+      background: #fff !important;
+      color: #111 !important;
+      font-family: 'Montserrat', 'Roboto', Arial, sans-serif !important;
+    }
+    .header {
+      background: var(--header-gradient) !important;
+      color: #fff !important;
+      /* Fallback for PDF and non-supporting browsers */
+      background-image: linear-gradient(90deg, #0d1a2f 0%, #1976d2 100%) !important;
+      background-color: #0d1a2f !important;
+    }
+    .section-header, .section-card {
+      background: var(--section-bg-gradient) !important;
+      border-radius: 12px !important;
+      margin-bottom: 18px !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04) !important;
+      /* Fallback for PDF and non-supporting browsers */
+      background-image: linear-gradient(90deg, #f5f7fa 0%, #e3ecf7 100%) !important;
+      background-color: #f5f7fa !important;
+    }
+    .scorecard.strategy .scorecard-fill {
+      background: var(--strategy-blue-gradient) !important;
+      background-image: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%) !important;
+      background-color: #1976d2 !important;
+    }
+    .scorecard.people .scorecard-fill {
+      background: var(--people-green-gradient) !important;
+      background-image: linear-gradient(90deg, #43a047 0%, #66bb6a 100%) !important;
+      background-color: #43a047 !important;
+    }
+    .scorecard.tools .scorecard-fill {
+      background: var(--tools-orange-gradient) !important;
+      background-image: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%) !important;
+      background-color: #ff9800 !important;
+    }
+    .scorecard.data .scorecard-fill {
+      background: var(--data-pink-gradient) !important;
+      background-image: linear-gradient(90deg, #ec407a 0%, #f06292 100%) !important;
+      background-color: #ec407a !important;
+    }
+    .scorecard.ethics .scorecard-fill {
+      background: var(--ethics-purple-gradient) !important;
+      background-image: linear-gradient(90deg, #8e24aa 0%, #ba68c8 100%) !important;
+      background-color: #8e24aa !important;
+    }
+    .scorecard-bar {
+      background: #e0e0e0 !important;
+      border-radius: 8px !important;
+      height: 18px !important;
+      margin-bottom: 8px !important;
+      overflow: hidden !important;
+    }
+    .scorecard-fill {
+      height: 100% !important;
+      border-radius: 8px !important;
+      transition: none !important;
+    }
+    .cta-button, .download-button {
+      background: var(--cta-gradient) !important;
+      color: #fff !important;
+      border: none !important;
+      border-radius: 6px !important;
+      padding: 12px 28px !important;
+      font-weight: 700 !important;
+      font-size: 1.1rem !important;
+      box-shadow: 0 2px 8px rgba(25,118,210,0.08) !important;
+      margin: 18px auto !important;
+      display: block !important;
+      text-align: center !important;
+      /* Fallback for PDF and non-supporting browsers */
+      background-image: linear-gradient(90deg, #1976d2 0%, #43a047 100%) !important;
+      background-color: #1976d2 !important;
+    }
+    .cta-button:hover, .download-button:hover {
+      filter: brightness(1.08) !important;
+      box-shadow: 0 0 0 3px #43a04733 !important;
+    }
+    .key-findings, .score-analysis, .insights-section, .cta-section, .contact-info {
+      background: #fff !important;
+      border: 1.5px solid #1976d2 !important;
+      border-radius: 12px !important;
+      color: #111 !important;
+    }
+    .citation {
+      background: #f5f7fa !important;
+      color: #333 !important;
+      border: 1px solid #e0e0e0 !important;
+    }
+    .scorecard-heading, .score-subheading {
+      display: flex !important;
+      align-items: center !important;
+      gap: 8px !important;
+      font-size: 1.1em !important;
+      font-weight: 700 !important;
+    }
+    .icon, .scorecard-heading .emoji, .score-subheading .emoji {
+      font-size: 1.2em !important;
+      vertical-align: middle !important;
+    }
+    @media print {
+      body, html {
+        background: #fff !important;
+        color: #111 !important;
+      }
+      .header, .section-header, .section-card {
+        background: #fff !important;
+        color: #111 !important;
+        box-shadow: none !important;
+      }
+      .cta-button, .download-button {
+        display: none !important;
+      }
+      .page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      .scorecard-bar, .scorecard-fill {
+        box-shadow: none !important;
+      }
+      .validation-footer {
+        display: none !important;
+      }
+    }
+  </style>
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://raw.githack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.w3.org https://jigsaw.w3.org; script-src 'self' https://raw.githack.com;">
+  <meta name="referrer" content="no-referrer">
 </head>
 <body>
   <a href="#main-content" class="skip-nav">Skip to main content</a>
@@ -76,63 +216,49 @@
 
       <div class="scorecard-container" role="group" aria-label="AI capability scores">
         <!-- Strategy -->
-        <div class="section-card">
-          <div class="scorecard strategy" role="region" aria-label="Strategy & Planning scorecard">
-            <h2 class="scorecard-heading" role="heading" aria-level="2">🧠 Strategy & Planning</h2>
-            <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
-            <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-              <div class="scorecard-fill" data-score="4"></div>
-            </div>
-            <div class="scorecard-level">Advanced</div>
+        <div class="scorecard strategy" role="region" aria-label="Strategy & Planning scorecard">
+          <h2 class="scorecard-heading" role="heading" aria-level="2">🧠 Strategy & Planning</h2>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+          <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+            <div class="scorecard-fill" data-score="4"></div>
           </div>
+          <div class="scorecard-level">Advanced</div>
         </div>
-
         <!-- People -->
-        <div class="section-card">
-          <div class="scorecard people" role="region" aria-label="People & Skills scorecard">
-            <h2 class="scorecard-heading" role="heading" aria-level="2">👥 People & Skills</h2>
-            <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
-            <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-              <div class="scorecard-fill" data-score="3"></div>
-            </div>
-            <div class="scorecard-level">Developing</div>
+        <div class="scorecard people" role="region" aria-label="People & Skills scorecard">
+          <h2 class="scorecard-heading" role="heading" aria-level="2">👥 People & Skills</h2>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+          <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+            <div class="scorecard-fill" data-score="3"></div>
           </div>
+          <div class="scorecard-level">Developing</div>
         </div>
-
         <!-- Tools -->
-        <div class="section-card">
-          <div class="scorecard tools" role="region" aria-label="Tools & Integration scorecard">
-            <h2 class="scorecard-heading" role="heading" aria-level="2">🛠️ Tools & Integration</h2>
-            <div class="scorecard-score"><span class="sr-only">Score: </span>2 out of 5</div>
-            <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
-              <div class="scorecard-fill" data-score="2"></div>
-            </div>
-            <div class="scorecard-level">Emerging</div>
+        <div class="scorecard tools" role="region" aria-label="Tools & Integration scorecard">
+          <h2 class="scorecard-heading" role="heading" aria-level="2">🛠️ Tools & Integration</h2>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>2 out of 5</div>
+          <div class="scorecard-bar" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5">
+            <div class="scorecard-fill" data-score="2"></div>
           </div>
+          <div class="scorecard-level">Emerging</div>
         </div>
-
         <!-- Data -->
-        <div class="section-card">
-          <div class="scorecard data" role="region" aria-label="Data Readiness scorecard">
-            <h2 class="scorecard-heading" role="heading" aria-level="2">📊 Data Readiness</h2>
-            <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
-            <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
-              <div class="scorecard-fill" data-score="3"></div>
-            </div>
-            <div class="scorecard-level">Developing</div>
+        <div class="scorecard data" role="region" aria-label="Data Readiness scorecard">
+          <h2 class="scorecard-heading" role="heading" aria-level="2">📊 Data Readiness</h2>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>3 out of 5</div>
+          <div class="scorecard-bar" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5">
+            <div class="scorecard-fill" data-score="3"></div>
           </div>
+          <div class="scorecard-level">Developing</div>
         </div>
-
         <!-- Ethics -->
-        <div class="section-card">
-          <div class="scorecard ethics" role="region" aria-label="Ethics & Governance scorecard">
-            <h2 class="scorecard-heading" role="heading" aria-level="2">🧭 Ethics & Governance</h2>
-            <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
-            <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
-              <div class="scorecard-fill" data-score="4"></div>
-            </div>
-            <div class="scorecard-level">Advanced</div>
+        <div class="scorecard ethics" role="region" aria-label="Ethics & Governance scorecard">
+          <h2 class="scorecard-heading" role="heading" aria-level="2">🧭 Ethics & Governance</h2>
+          <div class="scorecard-score"><span class="sr-only">Score: </span>4 out of 5</div>
+          <div class="scorecard-bar" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5">
+            <div class="scorecard-fill" data-score="4"></div>
           </div>
+          <div class="scorecard-level">Advanced</div>
         </div>
       </div>
 
@@ -396,8 +522,7 @@ if (ctaBtn) {
     const cat = Array.from(card.classList).find(c => categoryColors[c]);
     if (!cat) return;
     const fill = card.querySelector('.scorecard-fill');
-    const bar = card.querySelector('.scorecard-bar');
-    // Set color gradient
+    // Set color gradient using correct CSS custom property
     if (fill) fill.style.background = categoryColors[cat].gradient;
     // Set width from data-score or URL param
     let score = fill && fill.getAttribute('data-score');
@@ -406,6 +531,47 @@ if (ctaBtn) {
   });
 })();
 </script>
+<script>
+    // CSS loading verification and fallback
+    (function() {
+      function cssLoaded() {
+        // Check a known style from styles.min.css
+        const test = document.createElement('div');
+        test.className = 'scorecard strategy';
+        document.body.appendChild(test);
+        const style = window.getComputedStyle(test);
+        const hasGradient = style.backgroundImage && style.backgroundImage.includes('linear-gradient');
+        document.body.removeChild(test);
+        return hasGradient;
+      }
+      function enableFallback() {
+        document.getElementById('pdf-inline-styles').disabled = false;
+        document.body.classList.add('css-fallback-active');
+        console.log('[CSS Fallback] Inline PDF styles enabled.');
+      }
+      function disableFallback() {
+        document.getElementById('pdf-inline-styles').disabled = true;
+        document.body.classList.remove('css-fallback-active');
+        console.log('[CSS Fallback] External CSS loaded, inline PDF styles disabled.');
+      }
+      // Initially enable fallback for html2pdf.js
+      if (window.html2pdf) {
+        enableFallback();
+      } else {
+        // Wait for DOM and CSS
+        window.addEventListener('DOMContentLoaded', function() {
+          setTimeout(function() {
+            if (cssLoaded()) {
+              disableFallback();
+            } else {
+              enableFallback();
+              console.log('[CSS Fallback] styles.min.css not loaded or gradients missing.');
+            }
+          }, 100);
+        });
+      }
+    })();
+  </script>
 </body>
 </html>
 <footer class="validation-footer">
