@@ -9,20 +9,20 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&family=Roboto:wght@400;600;700;800&display=swap" rel="stylesheet">
   <meta name="color-scheme" content="light dark">
-  <link rel="stylesheet" href="styles.min.css" id="main-css">
+  <link rel="stylesheet" href="styles.css" id="main-css">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://fonts.googleapis.com https://fonts.gstatic.com https://raw.githack.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https://www.w3.org https://jigsaw.w3.org; script-src 'self' https://raw.githack.com;">
   <meta name="referrer" content="no-referrer">
 </head>
 <body>
   <a href="#main-content" class="skip-nav">Skip to main content</a>
-  <header class="header" style="background: linear-gradient(90deg, #003a75 0%, #0056b3 100%) !important;">
+  <header class="header">
     <div class="header-content">
       <img src="bc-logo.png" alt="Brave Concept Logo" class="logo-image">
       <div class="company-name">BRAVE CONCEPT AI</div>
       <h1 class="main-title">AI MATURITY ASSESSMENT REPORT</h1>
       <div class="tagline">Bold Ideas. Human Roots. Ethical By Design.</div>
       <div class="header-actions">
-        <a href="#" id="download-html" class="download-button" style="background: linear-gradient(90deg, #0056b3 0%, #1976d2 100%) !important; color: white !important;">Download This Report</a>
+        <a href="#" id="download-html" class="download-button">Download This Report</a>
       </div>
     </div>
   </header>
@@ -172,7 +172,7 @@
         <div class="score-item tools-score">
           <h3 class="score-subheading">🛠️ Tools & Integration: 2/5 – Emerging</h3>
           <div class="score-description">
-            Your technical infrastructure rates as <strong>Emerging</strong> for AI implementation. This evaluates not just the tools you’ve adopted, but how seamlessly they work together.
+            Your technical infrastructure rates as <strong>Emerging</strong> for AI implementation. This evaluates not just the tools you've adopted, but how seamlessly they work together.
           </div>
           <div class="industry-context">
             Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]
@@ -246,7 +246,7 @@
           Your assessment reveals significant potential, but also complex challenges that require strategic navigation. The gap between your perceived <strong>Advanced</strong> and actual <strong>Developing</strong> maturity highlights opportunities to drive strategic change.
         </p>
         <h4>📞 Book Your Free AI Strategy Session</h4>
-        <a href="https://calendly.com/tony-braveconcept-4qek/30min" class="cta-button" style="background: linear-gradient(90deg, #0056b3 0%, #1976d2 100%) !important; color: white !important;">Book Your Free 30-Minute Strategy Session</a>
+        <a href="https://calendly.com/tony-braveconcept-4qek/30min" class="cta-button">Book Your Free 30-Minute Strategy Session</a>
         <p><strong>Get personalized guidance from Brave Concept AI experts who can help you:</strong></p>
         <ul>
           <li>Develop a clear 90-day AI implementation plan</li>
@@ -270,7 +270,7 @@
       </div>
       <div style="text-align: center; margin: 20px;">
         <div style="text-align: center; margin-top: 40px;">
-          <button onclick="generatePDF()" aria-label="Download a PDF copy of your report" class="download-button" style="background: linear-gradient(90deg, #0056b3 0%, #1976d2 100%) !important; color: white !important;">📄 Download This Report</button>
+          <button onclick="generatePDF()" aria-label="Download a PDF copy of your report" class="download-button">📄 Download This Report</button>
         </div>
       </div>
     </main>
@@ -294,7 +294,8 @@
   });
 
   document.querySelectorAll('.scorecard-fill').forEach(el => {
-    const score = el.getAttribute('data-score');
+    const scorecard = el.closest('.scorecard');
+    const score = scorecard ? scorecard.getAttribute('data-score') : null;
     if (score) {
       el.style.width = `calc(${score} * 20%)`;
     }
@@ -388,36 +389,21 @@ if (ctaBtn) {
 (function() {
   const params = new URLSearchParams(window.location.search);
   const categoryColors = {
-    strategy: {
-      gradient: 'var(--strategy-blue-gradient)',
-      solid: '#1976d2'
-    },
-    people: {
-      gradient: 'var(--people-green-gradient)',
-      solid: '#43a047'
-    },
-    tools: {
-      gradient: 'var(--tools-orange-gradient)',
-      solid: '#ff9800'
-    },
-    data: {
-      gradient: 'var(--data-pink-gradient)',
-      solid: '#ec407a'
-    },
-    ethics: {
-      gradient: 'var(--ethics-purple-gradient)',
-      solid: '#8e24aa'
-    }
+    strategy: '#1976d2',
+    people: '#43a047',
+    tools: '#ff9800',
+    data: '#ec407a',
+    ethics: '#8e24aa'
   };
   // Set progress bar widths and colors
   document.querySelectorAll('.scorecard').forEach(card => {
     const cat = Array.from(card.classList).find(c => categoryColors[c]);
     if (!cat) return;
     const fill = card.querySelector('.scorecard-fill');
-    // Set color gradient using correct CSS custom property
-    if (fill) fill.style.background = categoryColors[cat].gradient;
+    // Set color using solid colors to match our updated CSS
+    if (fill) fill.style.background = categoryColors[cat];
     // Set width from data-score or URL param
-    let score = fill && fill.getAttribute('data-score');
+    let score = card.getAttribute('data-score');
     if (params.has(cat + '_score')) score = params.get(cat + '_score');
     if (score && fill) fill.style.width = `calc(${score} * 20%)`;
   });
@@ -427,14 +413,14 @@ if (ctaBtn) {
     // CSS loading verification and fallback
     (function() {
       function cssLoaded() {
-        // Check a known style from styles.min.css
+        // Check a known style from styles.css
         const test = document.createElement('div');
         test.className = 'scorecard strategy';
         document.body.appendChild(test);
         const style = window.getComputedStyle(test);
-        const hasGradient = style.backgroundImage && style.backgroundImage.includes('linear-gradient');
+        const hasScorecardStyles = style.borderLeftColor && style.borderLeftColor !== 'initial';
         document.body.removeChild(test);
-        return hasGradient;
+        return hasScorecardStyles;
       }
       function enableFallback() {
         document.getElementById('pdf-inline-styles').disabled = false;
@@ -457,7 +443,7 @@ if (ctaBtn) {
               disableFallback();
             } else {
               enableFallback();
-              console.log('[CSS Fallback] styles.min.css not loaded or gradients missing.');
+              console.log('[CSS Fallback] styles.css not loaded or scorecard styles missing.');
             }
           }, 100);
         });
