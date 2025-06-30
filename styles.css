@@ -13,20 +13,21 @@
   .scorecard {
     page-break-inside: avoid !important;
     margin-bottom: 15pt !important;
-    border: 2pt solid !important;
-    padding: 10pt !important;
+    border: 1pt solid #e0e0e0 !important;
+    padding: 15pt !important;
     background: white !important;
+    border-radius: 8pt !important;
   }
   
-  .scorecard.strategy { border-color: #1976d2 !important; }
-  .scorecard.people { border-color: #43a047 !important; }
-  .scorecard.tools { border-color: #ff9800 !important; }
-  .scorecard.data { border-color: #ec407a !important; }
-  .scorecard.ethics { border-color: #8e24aa !important; }
+  .scorecard.strategy { border-left: 4pt solid #1976d2 !important; }
+  .scorecard.people { border-left: 4pt solid #43a047 !important; }
+  .scorecard.tools { border-left: 4pt solid #ff9800 !important; }
+  .scorecard.data { border-left: 4pt solid #ec407a !important; }
+  .scorecard.ethics { border-left: 4pt solid #8e24aa !important; }
   
   .scorecard-fill {
     background: #333 !important;
-    height: 8pt !important;
+    height: 6pt !important;
   }
   
   .scorecard.strategy .scorecard-fill { background: #1976d2 !important; }
@@ -190,57 +191,57 @@ main {
   margin: 2rem 0;
 }
 .scorecard {
-  background: linear-gradient(135deg, var(--bg-light) 0%, #f8fafc 100%);
-  border-radius: 16px;
-  padding: 2rem 1.5rem;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-  border-left: 6px solid;
+  background: var(--bg-light);
+  border-radius: 8px;
+  padding: 2rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  border: 1px solid #e0e0e0;
+  border-left: 4px solid;
   position: relative;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  transition: box-shadow 0.2s ease;
 }
 .scorecard:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.12);
 }
-.scorecard.strategy { border-left-color: #1976d2; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); }
-.scorecard.people { border-left-color: #43a047; background: linear-gradient(135deg, #e8f5e8 0%, #c8e6c9 100%); }
-.scorecard.tools { border-left-color: #ff9800; background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%); }
-.scorecard.data { border-left-color: #ec407a; background: linear-gradient(135deg, #fce4ec 0%, #f8bbd9 100%); }
-.scorecard.ethics { border-left-color: #8e24aa; background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%); }
+.scorecard.strategy { border-left-color: #1976d2; }
+.scorecard.people { border-left-color: #43a047; }
+.scorecard.tools { border-left-color: #ff9800; }
+.scorecard.data { border-left-color: #ec407a; }
+.scorecard.ethics { border-left-color: #8e24aa; }
 .scorecard-heading {
-  font-size: 1.3rem;
-  font-weight: 700;
-  margin-bottom: 1rem;
-  color: var(--text-dark);
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.scorecard-score {
   font-size: 1.1rem;
   font-weight: 600;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
+  color: var(--text-dark);
+  letter-spacing: -0.01em;
+}
+.scorecard-score {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
   color: var(--primary-blue);
+  line-height: 1;
+  letter-spacing: -0.02em;
 }
 .scorecard-bar {
-  height: 14px;
-  background: rgba(0,0,0,0.1);
-  border-radius: 8px;
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
   overflow: hidden;
   position: relative;
-  margin-top: 1rem;
+  margin-top: 0.5rem;
 }
 .scorecard-fill {
   height: 100%;
-  border-radius: 8px;
+  border-radius: 4px;
   transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
-.scorecard.strategy .scorecard-fill { background: linear-gradient(90deg, #1976d2 0%, #42a5f5 100%); }
-.scorecard.people .scorecard-fill { background: linear-gradient(90deg, #43a047 0%, #66bb6a 100%); }
-.scorecard.tools .scorecard-fill { background: linear-gradient(90deg, #ff9800 0%, #ffb74d 100%); }
-.scorecard.data .scorecard-fill { background: linear-gradient(90deg, #ec407a 0%, #f06292 100%); }
-.scorecard.ethics .scorecard-fill { background: linear-gradient(90deg, #8e24aa 0%, #ab47bc 100%); }
+.scorecard.strategy .scorecard-fill { background: #1976d2; }
+.scorecard.people .scorecard-fill { background: #43a047; }
+.scorecard.tools .scorecard-fill { background: #ff9800; }
+.scorecard.data .scorecard-fill { background: #ec407a; }
+.scorecard.ethics .scorecard-fill { background: #8e24aa; }
 .scorecard-legend {
   margin-bottom: 2rem;
 }
