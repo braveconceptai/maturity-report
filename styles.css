@@ -1,3 +1,55 @@
+/* PDF-Optimized Styles */
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  
+  body { background: white !important; font-size: 12pt !important; line-height: 1.4 !important; }
+  
+  .header { 
+    background: linear-gradient(90deg, #003a75 0%, #0056b3 100%) !important;
+    color: white !important;
+    padding: 20pt !important;
+  }
+  
+  .scorecard {
+    page-break-inside: avoid !important;
+    margin-bottom: 15pt !important;
+    border: 2pt solid !important;
+    padding: 10pt !important;
+    background: white !important;
+  }
+  
+  .scorecard.strategy { border-color: #1976d2 !important; }
+  .scorecard.people { border-color: #43a047 !important; }
+  .scorecard.tools { border-color: #ff9800 !important; }
+  .scorecard.data { border-color: #ec407a !important; }
+  .scorecard.ethics { border-color: #8e24aa !important; }
+  
+  .scorecard-fill {
+    background: #333 !important;
+    height: 8pt !important;
+  }
+  
+  .scorecard.strategy .scorecard-fill { background: #1976d2 !important; }
+  .scorecard.people .scorecard-fill { background: #43a047 !important; }
+  .scorecard.tools .scorecard-fill { background: #ff9800 !important; }
+  .scorecard.data .scorecard-fill { background: #ec407a !important; }
+  .scorecard.ethics .scorecard-fill { background: #8e24aa !important; }
+  
+  .industry-context {
+    font-size: 10pt !important;
+    font-style: italic !important;
+    color: #666 !important;
+  }
+  
+  .section-header {
+    background: #003a75 !important;
+    color: white !important;
+    padding: 10pt !important;
+  }
+  
+  .download-button, .header-actions { display: none !important; }
+}
+
 /* Reset and Base */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
