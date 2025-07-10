@@ -1,6 +1,7 @@
 // server.js - Railway Web Service for PDF Generation
 const express = require('express');
-const puppeteer = require('puppeteer');
+const puppeteer = require('puppeteer-core');
+const chromium = require('@sparticuz/chromium');
 const sgMail = require('@sendgrid/mail');
 const multer = require('multer');
 const path = require('path');
@@ -108,17 +109,12 @@ app.post('/generate-report', async (req, res) => {
 async function generatePDF(data) {
   console.log('📄 Starting PDF generation...');
   
-  const browser = await puppeteer.launch({
-    args: [
-      '--no-sandbox',
-      '--disable-setuid-sandbox',
-      '--disable-web-security',
-      '--disable-background-timer-throttling',
-      '--disable-renderer-backgrounding',
-      '--disable-dev-shm-usage'
-    ],
-    headless: true
-  });
+const browser = await puppeteer.launch({
+  args: chromium.args,
+  defaultViewport: chromium.defaultViewport,
+  executablePath: await chromium.executablePath(),
+  headless: chromium.headless,
+});
 
   const page = await browser.newPage();
 
