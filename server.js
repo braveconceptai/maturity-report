@@ -1,0 +1,980 @@
+// server.js - Railway Web Service for PDF Generation
+const express = require('express');
+const puppeteer = require('puppeteer');
+const sgMail = require('@sendgrid/mail');
+const multer = require('multer');
+const path = require('path');
+
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+// Configure SendGrid
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+
+// Health check endpoint
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'AI Maturity Report Service Running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: 'GET /',
+      generateReport: 'POST /generate-report'
+    }
+  });
+});
+
+// Main PDF generation endpoint
+app.post('/generate-report', async (req, res) => {
+  console.log('🚀 Starting AI Maturity Report generation...');
+  
+  try {
+    const { 
+      clientName,
+      companyName, 
+      industry,
+      reportId,
+      assessmentDate,
+      scores, // { strategy: 3, tools: 2, people: 4, data: 3, ethics: 3 }
+      aiPoweredAnalysis,
+      tailoredRecommendations,
+      topOpportunities,
+      topChallenges,
+      recipientEmail
+    } = req.body;
+
+    // Validate required fields
+    if (!clientName || !companyName || !scores || !recipientEmail) {
+      return res.status(400).json({ 
+        error: 'Missing required fields: clientName, companyName, scores, recipientEmail' 
+      });
+    }
+
+    // Generate PDF
+    const pdfBuffer = await generatePDF({
+      clientName,
+      companyName,
+      industry: industry || 'Professional Services',
+      reportId: reportId || `BC-2025-${Date.now()}`,
+      assessmentDate: assessmentDate || new Date().toLocaleDateString('en-US', { 
+        weekday: 'long', 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric' 
+      }),
+      scores,
+      aiPoweredAnalysis: aiPoweredAnalysis || 'Your organization shows strong potential for AI advancement with strategic implementation.',
+      tailoredRecommendations: tailoredRecommendations || [
+        'Focus on building your data foundation first',
+        'Start with pilot projects in high-impact areas', 
+        'Develop clear AI governance frameworks'
+      ],
+      topOpportunities: topOpportunities || 'Process automation and decision support',
+      topChallenges: topChallenges || 'Implementation planning and change management'
+    });
+
+    // Send email with PDF attachment
+    await sendReportEmail({
+      recipientEmail,
+      clientName,
+      companyName,
+      scores,
+      pdfBuffer
+    });
+
+    console.log('✅ Report generated and sent successfully');
+    
+    res.json({ 
+      success: true, 
+      message: 'AI Maturity Report generated and sent successfully',
+      reportId: reportId || `BC-2025-${Date.now()}`,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('❌ Error generating report:', error);
+    res.status(500).json({ 
+      success: false, 
+      error: 'Failed to generate report',
+      details: error.message 
+    });
+  }
+});
+
+// PDF generation function (your existing code converted)
+async function generatePDF(data) {
+  console.log('📄 Starting PDF generation...');
+  
+  const browser = await puppeteer.launch({
+    args: [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-web-security',
+      '--disable-background-timer-throttling',
+      '--disable-renderer-backgrounding',
+      '--disable-dev-shm-usage'
+    ],
+    headless: true
+  });
+
+  const page = await browser.newPage();
+
+  await page.setViewport({
+    width: 1200,
+    height: 1600,
+    deviceScaleFactor: 2
+  });
+
+  // Your complete HTML template with data injection
+  const htmlContent = generateHTMLTemplate(data);
+
+  await page.setContent(htmlContent, {
+    waitUntil: 'networkidle0',
+    timeout: 60000
+  });
+
+  await page.emulateMediaType('print');
+
+  const pdf = await page.pdf({
+    format: 'Letter',
+    margin: {
+      top: '0.5in',
+      right: '0.4in',
+      bottom: '0.5in',
+      left: '0.4in'
+    },
+    printBackground: true,
+    scale: 0.85,
+    preferCSSPageSize: true,
+    displayHeaderFooter: false,
+    waitForFonts: true,
+    timeout: 60000,
+    omitBackground: false,
+    tagged: true
+  });
+
+  await browser.close();
+  
+  console.log('✅ PDF generated successfully');
+  return pdf;
+}
+
+// HTML template function with your exact styling
+function generateHTMLTemplate(data) {
+  const { clientName, companyName, industry, reportId, assessmentDate, scores, aiPoweredAnalysis, tailoredRecommendations, topOpportunities, topChallenges } = data;
+  
+  // Calculate maturity levels
+  const getMaturityLevel = (score) => {
+    if (score <= 1) return 'Emerging';
+    if (score <= 2) return 'Emerging';
+    if (score <= 3) return 'Developing';
+    if (score <= 4) return 'Advanced';
+    return 'Leading';
+  };
+
+  const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
+  const strongestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
+  const weakestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
+
+  const areaNames = {
+    strategy: 'Strategy & Planning',
+    tools: 'Tools & Integration', 
+    people: 'People & Skills',
+    data: 'Data Readiness',
+    ethics: 'Ethics & Governance'
+  };
+
+  return `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Maturity Assessment Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&family=Roboto:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        /* UNIVERSAL RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* BASE TYPOGRAPHY - ACCESSIBILITY COMPLIANT */
+        html, body {
+            font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+            line-height: 1.6;
+            color: #333;
+            background: white;
+            font-size: 14pt;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* PAGE STRUCTURE - EXACT 5 PAGES WITH TIGHTER SPACING */
+        @page {
+            size: Letter;
+            margin: 0.5in 0.4in;
+        }
+
+        .page-1, .page-2, .page-3, .page-4, .page-5 { 
+            break-after: page; 
+            min-height: 9.2in;
+            padding: 0.3rem 0;
+        }
+        
+        .page-5 { 
+            break-after: auto;
+        }
+
+        /* PRINT OPTIMIZATION */
+        @media print {
+            * {
+                print-color-adjust: exact !important;
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            
+            html, body {
+                font-family: 'Roboto', sans-serif !important;
+                font-size: 14pt !important;
+                line-height: 1.6 !important;
+            }
+        }
+
+        /* COVER HEADER - COMPRESSED FOR PAGE 1 FIT */
+        .cover-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
+            color: white;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 0.6rem;
+            border-radius: 8px;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+
+        .cover-title {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+            color: white;
+        }
+
+        .cover-subtitle {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: white;
+        }
+
+        .cover-tagline {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 1rem;
+            font-style: italic;
+            opacity: 0.95;
+            color: white;
+        }
+
+        /* SECTION HEADERS - COMPRESSED */
+        .section-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 0.6rem 1rem;
+            margin: 0.6rem 0 0.5rem 0;
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 6px;
+            print-color-adjust: exact;
+            -webkit-print-color-adjust: exact;
+        }
+
+        /* LAYOUT GRIDS - COMPRESSED */
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 0.6rem 0;
+        }
+
+        .content-block {
+            margin-bottom: 0.6rem;
+        }
+
+        /* SCORE DISPLAYS - COMPRESSED */
+        .score-display {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            print-color-adjust: exact;
+        }
+
+        .score-display h3 {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-bottom: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .score-large {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 3rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            line-height: 1;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-label {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 0.5rem;
+        }
+
+        .score-description {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.9rem;
+            color: #64748b;
+            line-height: 1.4;
+        }
+
+        /* KEY FINDINGS - COMPRESSED */
+        .key-findings-compact {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border-left: 4px solid #3b82f6;
+            padding: 0.6rem;
+            margin: 0.6rem 0;
+            border-radius: 0 6px 6px 0;
+            print-color-adjust: exact;
+        }
+
+        .key-findings-compact h3 {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+            color: #1e3a8a;
+        }
+
+        .key-findings-compact p {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.9rem;
+            color: #374151;
+        }
+
+        /* CAPABILITY GRID - CONSISTENT SPACING */
+        .capability-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.8rem;
+            margin: 0.6rem 0;
+        }
+
+        .capability-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            print-color-adjust: exact;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        /* FIXED: Exact grid positioning for all 5 scorecards */
+        .capability-box:nth-child(1) { grid-column: 1; grid-row: 1; }
+        .capability-box:nth-child(2) { grid-column: 2; grid-row: 1; }
+        .capability-box:nth-child(3) { grid-column: 1; grid-row: 2; }
+        .capability-box:nth-child(4) { grid-column: 2; grid-row: 2; }
+        .capability-box:nth-child(5) { 
+            grid-column: 1 / -1; 
+            grid-row: 3; 
+            width: 50%;
+            margin: 0 auto;
+        }
+
+        .capability-score {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            line-height: 1;
+        }
+
+        .capability-name {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .capability-level {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        /* PROGRESS BARS */
+        .progress-container {
+            background: #e2e8f0;
+            height: 8px;
+            border-radius: 4px;
+            overflow: hidden;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+
+        /* CAPABILITY COLORS */
+        .strategy .capability-score,
+        .strategy .capability-level { color: #1e40af !important; }
+        .strategy .progress-bar { 
+            background: #3b82f6 !important; 
+            width: ${scores.strategy * 20}% !important;
+        }
+
+        .tools .capability-score,
+        .tools .capability-level { color: #d97706 !important; }
+        .tools .progress-bar { 
+            background: #f59e0b !important; 
+            width: ${scores.tools * 20}% !important;
+        }
+
+        .people .capability-score,
+        .people .capability-level { color: #059669 !important; }
+        .people .progress-bar { 
+            background: #10b981 !important; 
+            width: ${scores.people * 20}% !important;
+        }
+
+        .data .capability-score,
+        .data .capability-level { color: #dc2626 !important; }
+        .data .progress-bar { 
+            background: #ef4444 !important; 
+            width: ${scores.data * 20}% !important;
+        }
+
+        .ethics .capability-score,
+        .ethics .capability-level { color: #7c3aed !important; }
+        .ethics .progress-bar { 
+            background: #8b5cf6 !important; 
+            width: ${scores.ethics * 20}% !important;
+        }
+
+        /* ANALYSIS BOXES - COMPRESSED FOR PAGE 3 FIT */
+        .analysis-box {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border-left: 4px solid #64748b;
+            padding: 0.5rem;
+            margin: 0.3rem 0;
+            border-radius: 0 6px 6px 0;
+            print-color-adjust: exact;
+        }
+
+        .analysis-box h3 {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .analysis-box p {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-bottom: 0.3rem;
+            color: #374151;
+        }
+
+        .analysis-box .research-quote {
+            font-style: italic;
+            color: #64748b;
+            font-size: 0.7rem;
+            margin-top: 0.2rem;
+            padding: 0.3rem;
+            background: rgba(148, 163, 184, 0.1);
+            border-radius: 3px;
+        }
+
+        .analysis-box.strategy { border-left-color: #3b82f6; }
+        .analysis-box.people { border-left-color: #10b981; }
+        .analysis-box.tools { border-left-color: #f59e0b; }
+        .analysis-box.data { border-left-color: #ef4444; }
+        .analysis-box.ethics { border-left-color: #8b5cf6; }
+
+        /* INSIGHTS SECTIONS - COMPRESSED FOR CONSISTENCY */
+        .insights-section {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            padding: 0.8rem;
+            margin: 0.6rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #1e3a8a;
+            print-color-adjust: exact;
+        }
+
+        .insights-section h3 {
+            font-family: 'Montserrat', sans-serif !important;
+            color: #1e3a8a;
+            margin-bottom: 0.6rem;
+            font-size: 1rem;
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.3rem;
+            font-weight: 600;
+        }
+
+        .insights-section p {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            margin-bottom: 0.5rem;
+            color: #374151;
+        }
+
+        /* CTA SECTION */
+        .cta-section-unified {
+            background: linear-gradient(135deg, #3b82f6 0%, #1e3a8a 50%, #06b6d4 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+            border-radius: 8px;
+            margin: 1.5rem 0;
+            print-color-adjust: exact;
+        }
+
+        .cta-section-unified h2 {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: white;
+        }
+
+        .cta-section-unified p {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 1rem;
+            color: white;
+            margin-bottom: 0.8rem;
+        }
+
+        .cta-button {
+            background: white;
+            color: #1e3a8a;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1rem;
+            font-weight: 600;
+            display: inline-block;
+            margin: 0.8rem 0;
+            text-decoration: none;
+        }
+
+        .cta-list {
+            text-align: left;
+            max-width: 500px;
+            margin: 1rem auto;
+        }
+
+        .cta-list ul {
+            margin-left: 1.5rem;
+        }
+
+        .cta-list li {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.95rem;
+            color: white;
+            margin-bottom: 0.5rem;
+        }
+
+        /* CONTACT SECTION - COMPRESSED FOR CONSISTENCY */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .contact-box {
+            text-align: center;
+            padding: 1rem;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+        }
+
+        .contact-box p {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.95rem;
+            margin-bottom: 0.6rem;
+        }
+
+        /* TYPOGRAPHY - COMPRESSED BUT ACCESSIBLE */
+        p {
+            font-family: 'Roboto', sans-serif !important;
+            margin-bottom: 0.4rem;
+            line-height: 1.5;
+            font-size: 14pt;
+        }
+
+        h3 {
+            font-family: 'Montserrat', sans-serif !important;
+            font-size: 1rem;
+            margin-bottom: 0.4rem;
+            font-weight: 600;
+        }
+
+        strong {
+            font-weight: 600;
+        }
+
+        ul {
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+
+        /* INDUSTRY INSIGHTS - COMPRESSED */
+        .industry-insights {
+            font-family: 'Roboto', sans-serif !important;
+            font-size: 0.75rem;
+            color: #64748b;
+            font-style: italic;
+            text-align: center;
+            margin-top: 0.4rem;
+            padding: 0.3rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- PAGE 1: COVER + REPORT DETAILS + AI MATURITY SNAPSHOT + KEY FINDINGS -->
+    <div class="page-1">
+        <div class="cover-header">
+            <h1 class="cover-title">BRAVE CONCEPT AI</h1>
+            <h2 class="cover-subtitle">AI MATURITY ASSESSMENT REPORT</h2>
+            <p class="cover-tagline">Bold Ideas. Human Roots. Ethical By Design.</p>
+        </div>
+        
+        <div class="section-header">📋 Report Details</div>
+        
+        <div class="two-column content-block">
+            <div>
+                <p><strong>Prepared for:</strong><br>${clientName}</p>
+                <p><strong>Company:</strong><br>${companyName}</p>
+                <p><strong>Report ID:</strong><br>${reportId}</p>
+            </div>
+            <div>
+                <p><strong>Industry:</strong><br>${industry}</p>
+                <p><strong>Assessment Date:</strong><br>${assessmentDate}</p>
+            </div>
+        </div>
+
+        <div class="section-header">📈 Your AI Maturity Snapshot</div>
+        
+        <div class="two-column content-block">
+            <div class="score-display">
+                <h3>YOUR PERCEIVED AI MATURITY</h3>
+                <div class="score-large">${overallScore}</div>
+                <div class="score-label">${getMaturityLevel(overallScore)}</div>
+                <p class="score-description">Your team believes you're making meaningful progress in AI adoption.</p>
+            </div>
+            <div class="score-display">
+                <h3>DATA-DRIVEN ASSESSMENT</h3>
+                <div class="score-large">${overallScore}</div>
+                <div class="score-label">${getMaturityLevel(overallScore)}</div>
+                <p class="score-description">Your assessment reveals solid foundations with clear pathways for ethical advancement.</p>
+            </div>
+        </div>
+        
+        <div class="key-findings-compact content-block">
+            <h3>Key Findings</h3>
+            <p><strong>Strongest Area:</strong> ${areaNames[strongestArea[0]]} | <strong>Growth Opportunity:</strong> ${areaNames[weakestArea[0]]} | <strong>Current Phase:</strong> ${getMaturityLevel(overallScore)}</p>
+        </div>
+    </div>
+
+    <!-- PAGE 2: AI CAPABILITY PROFILE -->
+    <div class="page-2">
+        <div class="section-header">📊 Your AI Capability Profile</div>
+        
+        <div class="capability-grid content-block">
+            <div class="capability-box strategy">
+                <div class="capability-score">${scores.strategy}/5</div>
+                <div class="capability-name">🧠 Strategy & Planning</div>
+                <div class="capability-level">${getMaturityLevel(scores.strategy)}</div>
+                <div class="progress-container">
+                    <div class="progress-bar strategy"></div>
+                </div>
+            </div>
+            
+            <div class="capability-box tools">
+                <div class="capability-score">${scores.tools}/5</div>
+                <div class="capability-name">🛠 Tools & Integration</div>
+                <div class="capability-level">${getMaturityLevel(scores.tools)}</div>
+                <div class="progress-container">
+                    <div class="progress-bar tools"></div>
+                </div>
+            </div>
+            
+            <div class="capability-box people">
+                <div class="capability-score">${scores.people}/5</div>
+                <div class="capability-name">👥 People & Skills</div>
+                <div class="capability-level">${getMaturityLevel(scores.people)}</div>
+                <div class="progress-container">
+                    <div class="progress-bar people"></div>
+                </div>
+            </div>
+            
+            <div class="capability-box data">
+                <div class="capability-score">${scores.data}/5</div>
+                <div class="capability-name">📊 Data Readiness</div>
+                <div class="capability-level">${getMaturityLevel(scores.data)}</div>
+                <div class="progress-container">
+                    <div class="progress-bar data"></div>
+                </div>
+            </div>
+            
+            <div class="capability-box ethics">
+                <div class="capability-score">${scores.ethics}/5</div>
+                <div class="capability-name">🧭 Ethics & Governance</div>
+                <div class="capability-level">${getMaturityLevel(scores.ethics)}</div>
+                <div class="progress-container">
+                    <div class="progress-bar ethics"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 3: DETAILED SCORE ANALYSIS -->
+    <div class="page-3">
+        <div class="section-header">🔍 Detailed Score Analysis</div>
+        
+        <div class="analysis-box strategy">
+            <h3>🧠 Strategy & Planning: ${scores.strategy}/5 – ${getMaturityLevel(scores.strategy)}</h3>
+            <p>At the ${getMaturityLevel(scores.strategy)} stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.</p>
+            <div class="research-quote">Research shows 39% of companies are in emerging phase, 31% developing, 22% expanding, and only 1% achieve strategic maturity. [McKinsey 2024]</div>
+        </div>
+
+        <div class="analysis-box people">
+            <h3>👥 People & Skills: ${scores.people}/5 – ${getMaturityLevel(scores.people)}</h3>
+            <p>Your workforce exhibits ${getMaturityLevel(scores.people)} AI capability, indicating how prepared your team is to leverage AI tools effectively.</p>
+            <div class="research-quote">70% of business leaders report skills gaps limiting growth, with only 12% of IT professionals actually possessing AI skills despite widespread adoption. [Springboard 2024, Deloitte 2024]</div>
+        </div>
+
+        <div class="analysis-box tools">
+            <h3>🛠 Tools & Integration: ${scores.tools}/5 – ${getMaturityLevel(scores.tools)}</h3>
+            <p>Your technical infrastructure rates as ${getMaturityLevel(scores.tools)} for AI implementation. This evaluates not just the tools you've adopted, but how seamlessly they work together.</p>
+            <div class="research-quote">Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]</div>
+        </div>
+
+        <div class="analysis-box data">
+            <h3>📊 Data Readiness: ${scores.data}/5 – ${getMaturityLevel(scores.data)}</h3>
+            <p>Your data foundation measures ${getMaturityLevel(scores.data)} for AI applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.</p>
+            <div class="research-quote">96% of organizations experience data quality issues in AI projects, with only 18% having clear strategies. [Forrester/PwC 2024, McKinsey 2024]</div>
+        </div>
+
+        <div class="analysis-box ethics">
+            <h3>🧭 Ethics & Governance: ${scores.ethics}/5 – ${getMaturityLevel(scores.ethics)}</h3>
+            <p>Your approach to responsible AI practices achieves ${getMaturityLevel(scores.ethics)} maturity, encompassing policies, oversight mechanisms, and cultural practices.</p>
+            <div class="research-quote">Only 18% have implemented policies, and just 21% have fully operationalized responsible AI across their organizations. [McKinsey 2024, Accenture 2024]</div>
+        </div>
+
+        <div class="industry-insights">
+            Industry insights: McKinsey Global AI Survey 2024, Deloitte State of AI 2024, Accenture AI Maturity Research 2024, PwC Responsible AI Survey 2024
+        </div>
+    </div>
+
+    <!-- PAGE 4: PERSONALIZED INSIGHTS -->
+    <div class="page-4">
+        <div class="section-header">💡 Your Personalized Insights</div>
+        
+        <div class="insights-section content-block">
+            <h3>Your AI Priorities & Challenges</h3>
+            <p><strong>Based on your assessment responses, here's what you told us:</strong></p>
+            <p><strong>Top Opportunities:</strong> ${topOpportunities}</p>
+            <p><strong>Top Challenges:</strong> ${topChallenges}</p>
+        </div>
+
+        <div class="insights-section content-block">
+            <h3>AI-Powered Analysis</h3>
+            <p>${aiPoweredAnalysis}</p>
+            <p>The gap between your perceived ${getMaturityLevel(overallScore)} and actual ${getMaturityLevel(overallScore)} maturity highlights opportunities to drive strategic change. Your ${getMaturityLevel(scores.people)} People & Skills rating suggests your team is ready to leverage AI tools effectively, while your ${getMaturityLevel(scores.tools)} Tools & Integration score indicates clear pathways for technical improvement.</p>
+        </div>
+
+        <div class="insights-section content-block">
+            <h3>Tailored Recommendations</h3>
+            ${Array.isArray(tailoredRecommendations) 
+              ? tailoredRecommendations.map((rec, i) => `<p><strong>${i + 1}.</strong> ${rec}</p>`).join('')
+              : `<p><strong>1.</strong> Build your ethical data foundation first. Ensure HIPAA-compliant organization and security—this creates trust and enables responsible AI growth.</p>
+                 <p><strong>2.</strong> Start small, think bold. Pilot cost-effective AI tools for routine tasks, allowing your team to focus on what humans do best—caring for patients.</p>
+                 <p><strong>3.</strong> Develop governance that matters. Create clear AI ethics guidelines that build stakeholder confidence and ensure every innovation serves your patients first.</p>`
+            }
+        </div>
+    </div>
+
+    <!-- PAGE 5: CTA + CONTACT -->
+    <div class="page-5">
+        <div class="cta-section-unified">
+            <h2>🚀 Ready to Accelerate Your AI Journey?</h2>
+            <p>Your assessment reveals significant potential, but also complex challenges that require strategic navigation.</p>
+            <div class="cta-button">Book Your Free 30-Minute Strategy Session</div>
+            <div class="cta-list">
+                <p><strong>Get personalized guidance from Brave Concept AI experts who can help you:</strong></p>
+                <ul>
+                    <li>Develop a clear 90-day AI implementation plan</li>
+                    <li>Navigate the specific challenges you identified</li>
+                    <li>Leverage your People & Skills to drive quick wins</li>
+                    <li>Address your Tools & Integration systematically</li>
+                </ul>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.5rem;">
+            <h3 style="text-align: center; font-family: 'Montserrat', sans-serif; font-size: 1.3rem; color: #1e3a8a; margin-bottom: 1rem;">Contact Information</h3>
+            <div class="contact-grid">
+                <div class="contact-box">
+                    <p><strong>📧 Email:</strong><br>info@braveconcept.ai</p>
+                    <p><strong>🌐 Website:</strong><br>braveconcept.ai</p>
+                </div>
+                <div class="contact-box">
+                    <p><strong>💬 AI Assistant:</strong><br>Ask BellaBot at braveconcept.ai</p>
+                    <p><strong>📞 Phone:</strong><br>(802) 560-8669</p>
+                </div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; font-style: italic; font-size: 0.9rem; color: #64748b;">Ready to get started? Schedule your complimentary consultation above.</p>
+        </div>
+    </div>
+</body>
+</html>`;
+}
+
+// Email sending function
+async function sendReportEmail({ recipientEmail, clientName, companyName, scores, pdfBuffer }) {
+  console.log('📧 Sending email to:', recipientEmail);
+  
+  const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
+  const getMaturityLevel = (score) => {
+    if (score <= 2) return 'Emerging';
+    if (score <= 3) return 'Developing'; 
+    if (score <= 4) return 'Advanced';
+    return 'Leading';
+  };
+
+  const strongestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
+  const weakestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
+
+  const areaNames = {
+    strategy: 'Strategy & Planning',
+    tools: 'Tools & Integration',
+    people: 'People & Skills', 
+    data: 'Data Readiness',
+    ethics: 'Ethics & Governance'
+  };
+
+  const msg = {
+    to: recipientEmail,
+    from: {
+      email: 'info@braveconcept.ai',
+      name: 'Brave Concept AI'
+    },
+    subject: 'Your AI Maturity Assessment Results Are Ready! 🚀',
+    html: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+        <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
+          <h1 style="margin: 0; font-size: 1.8rem;">Your AI Maturity Assessment Results</h1>
+          <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Bold Ideas. Human Roots. Ethical By Design.</p>
+        </div>
+        
+        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
+        
+        <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
+        
+        <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+          <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
+          <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
+          <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
+        </div>
+        
+        <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
+        <ul style="margin-left: 1.5rem;">
+          <li>✅ Detailed capability analysis</li>
+          <li>✅ Industry benchmarks</li>
+          <li>✅ Tailored recommendations</li>
+          <li>✅ 90-day action plan</li>
+        </ul>
+        
+        <div style="text-align: center; margin: 2rem 0;">
+          <a href="https://calendly.com/braveconcept-ai/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
+        </div>
+        
+        <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+          <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
+          <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
+        </div>
+        
+        <p>Best regards,<br>
+        <strong>The Brave Concept AI Team</strong></p>
+        
+        <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+          <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
+        </div>
+      </div>
+    `,
+    attachments: [
+      {
+        content: pdfBuffer.toString('base64'),
+        filename: `AI-Maturity-Report-${companyName.replace(/\s+/g, '-')}.pdf`,
+        type: 'application/pdf',
+        disposition: 'attachment'
+      }
+    ]
+  };
+
+  await sgMail.send(msg);
+  console.log('✅ Email sent successfully');
+}
+
+// Error handling middleware
+app.use((error, req, res, next) => {
+  console.error('❌ Server error:', error);
+  res.status(500).json({ 
+    success: false, 
+    error: 'Internal server error',
+    message: error.message 
+  });
+});
+
+// Start server
+app.listen(PORT, () => {
+  console.log(`🚀 AI Maturity Report Service running on port ${PORT}`);
+  console.log(`📍 Health check: http://localhost:${PORT}/`);
+  console.log(`📄 Generate report: POST http://localhost:${PORT}/generate-report`);
+});
+
+module.exports = app;
