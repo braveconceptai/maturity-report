@@ -903,10 +903,11 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
       subject: `Your AI Maturity Assessment Results - ${companyName}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
-            <h1 style="margin: 0; font-size: 1.8rem;">Your AI Maturity Assessment Results</h1>
-            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Bold Ideas. Human Roots. Ethical By Design.</p>
-          </div>
+         <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
+  <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">BRAVE CONCEPT AI</h1>
+  <h2 style="margin: 0.5rem 0; font-size: 1.4rem; font-weight: 600; font-family: 'Montserrat', sans-serif;">AI MATURITY ASSESSMENT REPORT</h2>
+  <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-style: italic; font-family: 'Roboto', sans-serif;">Bold Ideas. Human Roots. Ethical By Design.</p>
+</div>
           
           <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
           
@@ -943,12 +944,8 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
           </div>
         </div>
       `,
-     attachments: [{
-  data: pdfBuffer.toString('base64'),
-  filename: `AI-Maturity-Assessment-${companyName.replace(/\s+/g, '-')}.pdf`,
-  contentType: 'application/pdf'
-}]
-    };
+      attachment: pdfBuffer
+};
     const result = await mg.messages().send(emailData);
     console.log('✅ Email sent successfully:', result);
     return { success: true, messageId: result.id };
