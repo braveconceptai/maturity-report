@@ -944,7 +944,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
         </div>
       `,
      attachments: [{
-  data: pdfBuffer,
+  data: pdfBuffer.toString('base64'),
   filename: `AI-Maturity-Assessment-${companyName.replace(/\s+/g, '-')}.pdf`,
   contentType: 'application/pdf'
 }]
