@@ -2,7 +2,7 @@
 const express = require('express');
 const puppeteer = require('puppeteer-core');
 const chromium = require('@sparticuz/chromium');
-const sgMail = require('@sendgrid/mail');
+const mailgun = require('mailgun-js');
 const multer = require('multer');
 const path = require('path');
 
@@ -13,8 +13,11 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configure SendGrid
-sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+// Configure Mailgun
+const mg = mailgun({
+  apiKey: process.env.MAILGUN_API_KEY,
+  domain: process.env.MAILGUN_DOMAIN
+});
 
 // Health check endpoint
 app.get('/', (req, res) => {
@@ -870,7 +873,7 @@ function generateHTMLTemplate(data) {
 </html>`;
 }
 
-// Email sending function
+// Email sending function - REPLACE ENTIRE FUNCTION
 async function sendReportEmail({ recipientEmail, clientName, companyName, scores, pdfBuffer }) {
   console.log('📧 Sending email to:', recipientEmail);
   
@@ -893,78 +896,68 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
     ethics: 'Ethics & Governance'
   };
 
-  const msg = {
-    to: recipientEmail,
-    from: {
-      email: 'info@braveconcept.ai',
-      name: 'Brave Concept AI'
-    },
-    subject: 'Your AI Maturity Assessment Results Are Ready! 🚀',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
-          <h1 style="margin: 0; font-size: 1.8rem;">Your AI Maturity Assessment Results</h1>
-          <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Bold Ideas. Human Roots. Ethical By Design.</p>
+  try {
+    const emailData = {
+      from: 'Brave Concept AI <info@braveconcept.ai>',
+      to: recipientEmail,
+      subject: `Your AI Maturity Assessment Results - ${companyName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
+            <h1 style="margin: 0; font-size: 1.8rem;">Your AI Maturity Assessment Results</h1>
+            <p style="margin: 0.5rem 0 0 0; opacity: 0.9;">Bold Ideas. Human Roots. Ethical By Design.</p>
+          </div>
+          
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
+          
+          <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
+          
+          <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+            <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
+            <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
+            <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
+          </div>
+          
+          <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
+          <ul style="margin-left: 1.5rem;">
+            <li>✅ Detailed capability analysis</li>
+            <li>✅ Industry benchmarks</li>
+            <li>✅ Tailored recommendations</li>
+            <li>✅ 90-day action plan</li>
+          </ul>
+          
+          <div style="text-align: center; margin: 2rem 0;">
+            <a href="https://calendly.com/tony-braveconcept/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
+          </div>
+          
+          <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+            <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
+            <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
+          </div>
+          
+          <p>Best regards,<br>
+          <strong>The Brave Concept AI Team</strong></p>
+          
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+            <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
+          </div>
         </div>
-        
-        <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
-        
-        <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
-        
-        <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
-          <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
-          <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
-          <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
-        </div>
-        
-        <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
-        <ul style="margin-left: 1.5rem;">
-          <li>✅ Detailed capability analysis</li>
-          <li>✅ Industry benchmarks</li>
-          <li>✅ Tailored recommendations</li>
-          <li>✅ 90-day action plan</li>
-        </ul>
-        
-        <div style="text-align: center; margin: 2rem 0;">
-          <a href="https://calendly.com/braveconcept-ai/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
-        </div>
-        
-        <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
-          <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
-          <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
-        </div>
-        
-        <p>Best regards,<br>
-        <strong>The Brave Concept AI Team</strong></p>
-        
-        <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
-          <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
-        </div>
-      </div>
-    `,
-    attachments: [
-      {
-        content: pdfBuffer.toString('base64'),
-        filename: `AI-Maturity-Report-${companyName.replace(/\s+/g, '-')}.pdf`,
-        type: 'application/pdf',
-        disposition: 'attachment'
-      }
-    ]
-  };
-
-  await sgMail.send(msg);
-  console.log('✅ Email sent successfully');
+      `,
+     attachments: [{
+  data: pdfBuffer,
+  filename: `AI-Maturity-Assessment-${companyName.replace(/\s+/g, '-')}.pdf`,
+  contentType: 'application/pdf'
+}]
+    };
+    const result = await mg.messages().send(emailData);
+    console.log('✅ Email sent successfully:', result);
+    return { success: true, messageId: result.id };
+    
+  } catch (error) {
+    console.error('❌ Email sending failed:', error);
+    throw error;
+  }
 }
-
-// Error handling middleware
-app.use((error, req, res, next) => {
-  console.error('❌ Server error:', error);
-  res.status(500).json({ 
-    success: false, 
-    error: 'Internal server error',
-    message: error.message 
-  });
-});
 
 // Start server
 app.listen(PORT, () => {
