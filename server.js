@@ -876,6 +876,9 @@ function generateHTMLTemplate(data) {
 // Email sending function - REPLACE ENTIRE FUNCTION
 async function sendReportEmail({ recipientEmail, clientName, companyName, scores, pdfBuffer }) {
   console.log('📧 Sending email to:', recipientEmail);
+console.log('🔍 DEBUG: Using domain:', process.env.MAILGUN_DOMAIN);
+console.log('🔍 DEBUG: API Key exists:', !!process.env.MAILGUN_API_KEY);
+console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer.length, 'bytes');
   
   const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
   const getMaturityLevel = (score) => {
@@ -898,7 +901,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
 
   try {
     const emailData = {
-      from: 'Brave Concept AI <info@braveconcept.ai>',
+      from: 'Brave Concept AI <postmaster@sandbox1216a761200e427d9324c4a064325a7e.mailgun.org>',
       to: recipientEmail,
       subject: `Your AI Maturity Assessment Results - ${companyName}`,
       html: `
