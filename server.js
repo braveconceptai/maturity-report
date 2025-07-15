@@ -9,9 +9,34 @@ const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+// Enhanced middleware configuration for Railway + Zapier
+app.use(express.json({ 
+  limit: '10mb',
+  type: ['application/json', 'application/*+json'],
+  verify: (req, res, buf) => {
+    req.rawBody = buf; // Store raw body for debugging
+  }
+}));
+
+app.use(express.urlencoded({ 
+  extended: true,
+  limit: '10mb',
+  type: 'application/x-www-form-urlencoded'
+}));
+
+// Debugging middleware for webhooks
+app.use('/generate-report', (req, res, next) => {
+  console.log('🔍 Request Headers:', req.headers);
+  console.log('🔍 Content-Type:', req.get('Content-Type'));
+  console.log('🔍 Request Method:', req.method);
+  
+  // Log first 500 chars of raw body if available
+  if (req.rawBody) {
+    console.log('🔍 Raw body preview:', req.rawBody.toString().substring(0, 500));
+  }
+  
+  next();
+});
 
 // Configure Mailgun
 const mg = mailgun({
