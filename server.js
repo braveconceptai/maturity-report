@@ -63,11 +63,10 @@ app.post('/generate-report', async (req, res) => {
     };
     
     console.log('🔍 DEBUG: Raw scores:', rawScores);
-    console.log('🔍 DEBUG: Converted scores:', scores);
-    // ← END OF NEW LINES
+console.log('🔍 DEBUG: Converted scores:', scores);
 
-    // Validate required fields
-    if (!clientName || !companyName || !scores || !recipientEmail) {
+// Validate required fields  
+if (!clientName || !companyName || !recipientEmail || !scores.strategy) {
       return res.status(400).json({ 
         error: 'Missing required fields: clientName, companyName, scores, recipientEmail' 
       });
