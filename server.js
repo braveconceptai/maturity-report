@@ -63,13 +63,16 @@ app.post('/generate-report', async (req, res) => {
   console.log('🚀 Starting AI Maturity Report generation...');
   
   try {
+    // DEBUG: Log the full request body
+    console.log('🔍 DEBUG: Full req.body:', JSON.stringify(req.body, null, 2));
+    
     const { 
       clientName,
       companyName, 
       industry,
       reportId,
       assessmentDate,
-      scores: rawScores, // ← CHANGED: Get raw scores first
+      scores: rawScores,
       aiPoweredAnalysis,
       tailoredRecommendations,
       topOpportunities,
@@ -77,7 +80,6 @@ app.post('/generate-report', async (req, res) => {
       recipientEmail
     } = req.body;
 
-    // ← ADD THESE NEW LINES:
     // Convert string scores to numbers
     const scores = {
       strategy: parseFloat(rawScores?.strategy) || 0,
@@ -88,16 +90,28 @@ app.post('/generate-report', async (req, res) => {
     };
     
     console.log('🔍 DEBUG: Raw scores:', rawScores);
-console.log('🔍 DEBUG: Converted scores:', scores);
+    console.log('🔍 DEBUG: Converted scores:', scores);
 
-// Validate required fields  
-if (!clientName || !companyName || !recipientEmail || !scores.strategy) {
+    // NEW VALIDATION LOGIC - check for actual values not just existence
+    if (!clientName || !companyName || !recipientEmail || scores.strategy === 0) {
+      console.log('❌ Validation failed:', { 
+        clientName: !!clientName, 
+        companyName: !!companyName, 
+        recipientEmail: !!recipientEmail, 
+        strategyScore: scores.strategy 
+      });
       return res.status(400).json({ 
-        error: 'Missing required fields: clientName, companyName, scores, recipientEmail' 
+        error: 'Missing required fields or invalid scores',
+        received: { 
+          clientName: !!clientName, 
+          companyName: !!companyName, 
+          recipientEmail: !!recipientEmail, 
+          scores: scores 
+        }
       });
     }
 
-    // ← LEAVE EVERYTHING ELSE EXACTLY THE SAME FROM HERE DOWN ←
+    console.log('✅ Validation passed!');
 
     // Generate PDF
     const pdfBuffer = await generatePDF({
