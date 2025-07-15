@@ -56,9 +56,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// ONLY REPLACE THE BEGINNING OF THE /generate-report ENDPOINT:
-// Find this section and replace it with the version below:
-
+// COMPLETE UPDATED GENERATE REPORT ENDPOINT
 app.post('/generate-report', async (req, res) => {
   console.log('🚀 Starting AI Maturity Report generation...');
   
@@ -66,19 +64,45 @@ app.post('/generate-report', async (req, res) => {
     // DEBUG: Log the full request body
     console.log('🔍 DEBUG: Full req.body:', JSON.stringify(req.body, null, 2));
     
+    // FIX: Handle Zapier's stringified JSON format
+    let parsedBody;
+    if (req.body[""] && typeof req.body[""] === 'string') {
+      // Zapier sent JSON as a string in empty key
+      console.log('🔧 Parsing Zapier stringified JSON...');
+      parsedBody = JSON.parse(req.body[""]);
+    } else {
+      // Normal JSON object
+      parsedBody = req.body;
+    }
+    
+    console.log('🔍 DEBUG: Parsed body:', JSON.stringify(parsedBody, null, 2));
+    
     const { 
       clientName,
       companyName, 
       industry,
       reportId,
       assessmentDate,
+      recipientEmail,
       scores: rawScores,
+      // NEW FIELDS FOR COMPREHENSIVE MAPPING
+      perceivedMaturity,
+      perceivedMaturityLevel,
+      overallMaturityLevel,
+      overallMaturityDescription,
+      strongestArea,
+      growthOpportunity,
+      strategyLevel,
+      peopleLevel,
+      toolsLevel,
+      dataLevel,
+      ethicsLevel,
+      // EXISTING FIELDS
       aiPoweredAnalysis,
       tailoredRecommendations,
       topOpportunities,
-      topChallenges,
-      recipientEmail
-    } = req.body;
+      topChallenges
+    } = parsedBody;
 
     // Convert string scores to numbers
     const scores = {
@@ -91,8 +115,15 @@ app.post('/generate-report', async (req, res) => {
     
     console.log('🔍 DEBUG: Raw scores:', rawScores);
     console.log('🔍 DEBUG: Converted scores:', scores);
+    console.log('🔍 DEBUG: Additional fields:', {
+      perceivedMaturity,
+      perceivedMaturityLevel,
+      overallMaturityLevel,
+      strongestArea,
+      growthOpportunity
+    });
 
-    // NEW VALIDATION LOGIC - check for actual values not just existence
+    // Enhanced validation
     if (!clientName || !companyName || !recipientEmail || scores.strategy === 0) {
       console.log('❌ Validation failed:', { 
         clientName: !!clientName, 
@@ -113,7 +144,7 @@ app.post('/generate-report', async (req, res) => {
 
     console.log('✅ Validation passed!');
 
-    // Generate PDF
+    // Generate PDF with ALL fields
     const pdfBuffer = await generatePDF({
       clientName,
       companyName,
@@ -126,6 +157,19 @@ app.post('/generate-report', async (req, res) => {
         day: 'numeric' 
       }),
       scores,
+      // NEW COMPREHENSIVE FIELDS
+      perceivedMaturity: perceivedMaturity || Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5),
+      perceivedMaturityLevel: perceivedMaturityLevel || getMaturityLevel(Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5)),
+      overallMaturityLevel: overallMaturityLevel || Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5),
+      overallMaturityDescription: overallMaturityDescription || getMaturityLevel(Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5)),
+      strongestArea: strongestArea || getStrongestArea(scores),
+      growthOpportunity: growthOpportunity || getWeakestArea(scores),
+      strategyLevel: strategyLevel || getMaturityLevel(scores.strategy),
+      peopleLevel: peopleLevel || getMaturityLevel(scores.people),
+      toolsLevel: toolsLevel || getMaturityLevel(scores.tools),
+      dataLevel: dataLevel || getMaturityLevel(scores.data),
+      ethicsLevel: ethicsLevel || getMaturityLevel(scores.ethics),
+      // EXISTING FIELDS WITH FALLBACKS
       aiPoweredAnalysis: aiPoweredAnalysis || 'Your organization shows strong potential for AI advancement with strategic implementation.',
       tailoredRecommendations: tailoredRecommendations || [
         'Focus on building your data foundation first',
@@ -164,16 +208,49 @@ app.post('/generate-report', async (req, res) => {
   }
 });
 
-// PDF generation function (your existing code converted)
+// HELPER FUNCTIONS
+function getMaturityLevel(score) {
+  if (score <= 1) return 'Emerging';
+  if (score <= 2) return 'Emerging';
+  if (score <= 3) return 'Developing';
+  if (score <= 4) return 'Advanced';
+  return 'Leading';
+}
+
+function getStrongestArea(scores) {
+  const areaNames = {
+    strategy: 'Strategy & Planning',
+    tools: 'Tools & Integration', 
+    people: 'People & Skills',
+    data: 'Data Readiness',
+    ethics: 'Ethics & Governance'
+  };
+  const strongest = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
+  return areaNames[strongest[0]];
+}
+
+function getWeakestArea(scores) {
+  const areaNames = {
+    strategy: 'Strategy & Planning',
+    tools: 'Tools & Integration', 
+    people: 'People & Skills',
+    data: 'Data Readiness',
+    ethics: 'Ethics & Governance'
+  };
+  const weakest = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
+  return areaNames[weakest[0]];
+}
+
+// PDF generation function
 async function generatePDF(data) {
   console.log('📄 Starting PDF generation...');
   
-const browser = await puppeteer.launch({
-  args: chromium.args,
-  defaultViewport: chromium.defaultViewport,
-  executablePath: await chromium.executablePath(),
-  headless: chromium.headless,
-});
+  const browser = await puppeteer.launch({
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
+  });
 
   const page = await browser.newPage();
 
@@ -183,7 +260,7 @@ const browser = await puppeteer.launch({
     deviceScaleFactor: 2
   });
 
-  // Your complete HTML template with data injection
+  // Generate HTML template with data injection
   const htmlContent = generateHTMLTemplate(data);
 
   await page.setContent(htmlContent, {
@@ -217,30 +294,31 @@ const browser = await puppeteer.launch({
   return pdf;
 }
 
-// HTML template function with your exact styling
+// UPDATED HTML template function with ALL field mappings
 function generateHTMLTemplate(data) {
-  const { clientName, companyName, industry, reportId, assessmentDate, scores, aiPoweredAnalysis, tailoredRecommendations, topOpportunities, topChallenges } = data;
-  
-  // Calculate maturity levels
-  const getMaturityLevel = (score) => {
-    if (score <= 1) return 'Emerging';
-    if (score <= 2) return 'Emerging';
-    if (score <= 3) return 'Developing';
-    if (score <= 4) return 'Advanced';
-    return 'Leading';
-  };
-
-  const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
-  const strongestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
-  const weakestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
-
-  const areaNames = {
-    strategy: 'Strategy & Planning',
-    tools: 'Tools & Integration', 
-    people: 'People & Skills',
-    data: 'Data Readiness',
-    ethics: 'Ethics & Governance'
-  };
+  const { 
+    clientName, 
+    companyName, 
+    industry, 
+    reportId, 
+    assessmentDate, 
+    scores,
+    perceivedMaturity,
+    perceivedMaturityLevel,
+    overallMaturityLevel,
+    overallMaturityDescription,
+    strongestArea,
+    growthOpportunity,
+    strategyLevel,
+    peopleLevel,
+    toolsLevel,
+    dataLevel,
+    ethicsLevel,
+    aiPoweredAnalysis, 
+    tailoredRecommendations, 
+    topOpportunities, 
+    topChallenges 
+  } = data;
 
   return `
 <!DOCTYPE html>
@@ -260,7 +338,7 @@ function generateHTMLTemplate(data) {
             box-sizing: border-box;
         }
 
-        /* BASE TYPOGRAPHY - ACCESSIBILITY COMPLIANT */
+        /* BASE TYPOGRAPHY */
         html, body {
             font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
             line-height: 1.6;
@@ -271,7 +349,7 @@ function generateHTMLTemplate(data) {
             -moz-osx-font-smoothing: grayscale;
         }
 
-        /* PAGE STRUCTURE - EXACT 5 PAGES WITH TIGHTER SPACING */
+        /* PAGE STRUCTURE */
         @page {
             size: Letter;
             margin: 0.5in 0.4in;
@@ -302,7 +380,7 @@ function generateHTMLTemplate(data) {
             }
         }
 
-        /* COVER HEADER - COMPRESSED FOR PAGE 1 FIT */
+        /* COVER HEADER */
         .cover-header {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%);
             color: white;
@@ -338,7 +416,7 @@ function generateHTMLTemplate(data) {
             color: white;
         }
 
-        /* SECTION HEADERS - COMPRESSED */
+        /* SECTION HEADERS */
         .section-header {
             background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
             color: white;
@@ -352,7 +430,7 @@ function generateHTMLTemplate(data) {
             -webkit-print-color-adjust: exact;
         }
 
-        /* LAYOUT GRIDS - COMPRESSED */
+        /* LAYOUT GRIDS */
         .two-column {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -364,7 +442,7 @@ function generateHTMLTemplate(data) {
             margin-bottom: 0.6rem;
         }
 
-        /* SCORE DISPLAYS - COMPRESSED */
+        /* SCORE DISPLAYS */
         .score-display {
             text-align: center;
             padding: 1rem;
@@ -408,7 +486,7 @@ function generateHTMLTemplate(data) {
             line-height: 1.4;
         }
 
-        /* KEY FINDINGS - COMPRESSED */
+        /* KEY FINDINGS */
         .key-findings-compact {
             background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
             border-left: 4px solid #3b82f6;
@@ -431,7 +509,7 @@ function generateHTMLTemplate(data) {
             color: #374151;
         }
 
-        /* CAPABILITY GRID - CONSISTENT SPACING */
+        /* CAPABILITY GRID */
         .capability-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
@@ -452,7 +530,6 @@ function generateHTMLTemplate(data) {
             justify-content: space-between;
         }
 
-        /* FIXED: Exact grid positioning for all 5 scorecards */
         .capability-box:nth-child(1) { grid-column: 1; grid-row: 1; }
         .capability-box:nth-child(2) { grid-column: 2; grid-row: 1; }
         .capability-box:nth-child(3) { grid-column: 1; grid-row: 2; }
@@ -538,7 +615,7 @@ function generateHTMLTemplate(data) {
             width: ${scores.ethics * 20}% !important;
         }
 
-        /* ANALYSIS BOXES - COMPRESSED FOR PAGE 3 FIT */
+        /* ANALYSIS BOXES */
         .analysis-box {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border-left: 4px solid #64748b;
@@ -579,7 +656,7 @@ function generateHTMLTemplate(data) {
         .analysis-box.data { border-left-color: #ef4444; }
         .analysis-box.ethics { border-left-color: #8b5cf6; }
 
-        /* INSIGHTS SECTIONS - COMPRESSED FOR CONSISTENCY */
+        /* INSIGHTS SECTIONS */
         .insights-section {
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             padding: 0.8rem;
@@ -662,7 +739,7 @@ function generateHTMLTemplate(data) {
             margin-bottom: 0.5rem;
         }
 
-        /* CONTACT SECTION - COMPRESSED FOR CONSISTENCY */
+        /* CONTACT SECTION */
         .contact-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -684,7 +761,7 @@ function generateHTMLTemplate(data) {
             margin-bottom: 0.6rem;
         }
 
-        /* TYPOGRAPHY - COMPRESSED BUT ACCESSIBLE */
+        /* TYPOGRAPHY */
         p {
             font-family: 'Roboto', sans-serif !important;
             margin-bottom: 0.4rem;
@@ -713,18 +790,6 @@ function generateHTMLTemplate(data) {
             font-family: 'Roboto', sans-serif !important;
             font-size: 0.95rem;
             line-height: 1.6;
-        }
-
-        /* INDUSTRY INSIGHTS - COMPRESSED */
-        .industry-insights {
-            font-family: 'Roboto', sans-serif !important;
-            font-size: 0.75rem;
-            color: #64748b;
-            font-style: italic;
-            text-align: center;
-            margin-top: 0.4rem;
-            padding: 0.3rem;
-            border-top: 1px solid #e2e8f0;
         }
     </style>
 </head>
@@ -756,21 +821,21 @@ function generateHTMLTemplate(data) {
         <div class="two-column content-block">
             <div class="score-display">
                 <h3>YOUR PERCEIVED AI MATURITY</h3>
-                <div class="score-large">${overallScore}</div>
-                <div class="score-label">${getMaturityLevel(overallScore)}</div>
+                <div class="score-large">${perceivedMaturity}</div>
+                <div class="score-label">${perceivedMaturityLevel}</div>
                 <p class="score-description">Your team believes you're making meaningful progress in AI adoption.</p>
             </div>
             <div class="score-display">
                 <h3>DATA-DRIVEN ASSESSMENT</h3>
-                <div class="score-large">${overallScore}</div>
-                <div class="score-label">${getMaturityLevel(overallScore)}</div>
+                <div class="score-large">${overallMaturityLevel}</div>
+                <div class="score-label">${overallMaturityDescription}</div>
                 <p class="score-description">Your assessment reveals solid foundations with clear pathways for ethical advancement.</p>
             </div>
         </div>
         
         <div class="key-findings-compact content-block">
             <h3>Key Findings</h3>
-            <p><strong>Strongest Area:</strong> ${areaNames[strongestArea[0]]} | <strong>Growth Opportunity:</strong> ${areaNames[weakestArea[0]]} | <strong>Current Phase:</strong> ${getMaturityLevel(overallScore)}</p>
+            <p><strong>Strongest Area:</strong> ${strongestArea} | <strong>Growth Opportunity:</strong> ${growthOpportunity} | <strong>Current Phase:</strong> ${overallMaturityDescription}</p>
         </div>
     </div>
 
@@ -782,7 +847,7 @@ function generateHTMLTemplate(data) {
             <div class="capability-box strategy">
                 <div class="capability-score">${scores.strategy}/5</div>
                 <div class="capability-name">🧠 Strategy & Planning</div>
-                <div class="capability-level">${getMaturityLevel(scores.strategy)}</div>
+                <div class="capability-level">${strategyLevel}</div>
                 <div class="progress-container">
                     <div class="progress-bar strategy"></div>
                 </div>
@@ -791,7 +856,7 @@ function generateHTMLTemplate(data) {
             <div class="capability-box tools">
                 <div class="capability-score">${scores.tools}/5</div>
                 <div class="capability-name">🛠 Tools & Integration</div>
-                <div class="capability-level">${getMaturityLevel(scores.tools)}</div>
+                <div class="capability-level">${toolsLevel}</div>
                 <div class="progress-container">
                     <div class="progress-bar tools"></div>
                 </div>
@@ -800,7 +865,7 @@ function generateHTMLTemplate(data) {
             <div class="capability-box people">
                 <div class="capability-score">${scores.people}/5</div>
                 <div class="capability-name">👥 People & Skills</div>
-                <div class="capability-level">${getMaturityLevel(scores.people)}</div>
+                <div class="capability-level">${peopleLevel}</div>
                 <div class="progress-container">
                     <div class="progress-bar people"></div>
                 </div>
@@ -809,7 +874,7 @@ function generateHTMLTemplate(data) {
             <div class="capability-box data">
                 <div class="capability-score">${scores.data}/5</div>
                 <div class="capability-name">📊 Data Readiness</div>
-                <div class="capability-level">${getMaturityLevel(scores.data)}</div>
+                <div class="capability-level">${dataLevel}</div>
                 <div class="progress-container">
                     <div class="progress-bar data"></div>
                 </div>
@@ -818,7 +883,7 @@ function generateHTMLTemplate(data) {
             <div class="capability-box ethics">
                 <div class="capability-score">${scores.ethics}/5</div>
                 <div class="capability-name">🧭 Ethics & Governance</div>
-                <div class="capability-level">${getMaturityLevel(scores.ethics)}</div>
+                <div class="capability-level">${ethicsLevel}</div>
                 <div class="progress-container">
                     <div class="progress-bar ethics"></div>
                 </div>
@@ -831,37 +896,33 @@ function generateHTMLTemplate(data) {
         <div class="section-header">🔍 Detailed Score Analysis</div>
         
         <div class="analysis-box strategy">
-            <h3>🧠 Strategy & Planning: ${scores.strategy}/5 – ${getMaturityLevel(scores.strategy)}</h3>
-            <p>At the ${getMaturityLevel(scores.strategy)} stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.</p>
+            <h3>🧠 Strategy & Planning: ${scores.strategy}/5 – ${strategyLevel}</h3>
+            <p>At the ${strategyLevel} stage, your organization is actively working to integrate AI into core business objectives and strategic planning processes.</p>
             <div class="research-quote">Research shows 39% of companies are in emerging phase, 31% developing, 22% expanding, and only 1% achieve strategic maturity. [McKinsey 2024]</div>
         </div>
 
         <div class="analysis-box people">
-            <h3>👥 People & Skills: ${scores.people}/5 – ${getMaturityLevel(scores.people)}</h3>
-            <p>Your workforce exhibits ${getMaturityLevel(scores.people)} AI capability, indicating how prepared your team is to leverage AI tools effectively.</p>
+            <h3>👥 People & Skills: ${scores.people}/5 – ${peopleLevel}</h3>
+            <p>Your workforce exhibits ${peopleLevel} AI capability, indicating how prepared your team is to leverage AI tools effectively.</p>
             <div class="research-quote">70% of business leaders report skills gaps limiting growth, with only 12% of IT professionals actually possessing AI skills despite widespread adoption. [Springboard 2024, Deloitte 2024]</div>
         </div>
 
         <div class="analysis-box tools">
-            <h3>🛠 Tools & Integration: ${scores.tools}/5 – ${getMaturityLevel(scores.tools)}</h3>
-            <p>Your technical infrastructure rates as ${getMaturityLevel(scores.tools)} for AI implementation. This evaluates not just the tools you've adopted, but how seamlessly they work together.</p>
+            <h3>🛠 Tools & Integration: ${scores.tools}/5 – ${toolsLevel}</h3>
+            <p>Your technical infrastructure rates as ${toolsLevel} for AI implementation. This evaluates not just the tools you've adopted, but how seamlessly they work together.</p>
             <div class="research-quote">Only 22% of organizations have architecture ready to support AI workloads, despite 65% using AI regularly. Just 1% achieve mature integration. [Databricks 2024, McKinsey 2024]</div>
         </div>
 
         <div class="analysis-box data">
-            <h3>📊 Data Readiness: ${scores.data}/5 – ${getMaturityLevel(scores.data)}</h3>
-            <p>Your data foundation measures ${getMaturityLevel(scores.data)} for AI applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.</p>
+            <h3>📊 Data Readiness: ${scores.data}/5 – ${dataLevel}</h3>
+            <p>Your data foundation measures ${dataLevel} for AI applications. This critical dimension determines whether your information assets are sufficiently organized and accessible.</p>
             <div class="research-quote">96% of organizations experience data quality issues in AI projects, with only 18% having clear strategies. [Forrester/PwC 2024, McKinsey 2024]</div>
         </div>
 
         <div class="analysis-box ethics">
-            <h3>🧭 Ethics & Governance: ${scores.ethics}/5 – ${getMaturityLevel(scores.ethics)}</h3>
-            <p>Your approach to responsible AI practices achieves ${getMaturityLevel(scores.ethics)} maturity, encompassing policies, oversight mechanisms, and cultural practices.</p>
+            <h3>🧭 Ethics & Governance: ${scores.ethics}/5 – ${ethicsLevel}</h3>
+            <p>Your approach to responsible AI practices achieves ${ethicsLevel} maturity, encompassing policies, oversight mechanisms, and cultural practices.</p>
             <div class="research-quote">Only 18% have implemented policies, and just 21% have fully operationalized responsible AI across their organizations. [McKinsey 2024, Accenture 2024]</div>
-        </div>
-
-        <div class="industry-insights">
-            Industry insights: McKinsey Global AI Survey 2024, Deloitte State of AI 2024, Accenture AI Maturity Research 2024, PwC Responsible AI Survey 2024
         </div>
     </div>
 
@@ -879,7 +940,7 @@ function generateHTMLTemplate(data) {
         <div class="insights-section content-block">
             <h3>AI-Powered Analysis</h3>
             <p>${aiPoweredAnalysis}</p>
-            <p>The gap between your perceived ${getMaturityLevel(overallScore)} and actual ${getMaturityLevel(overallScore)} maturity highlights opportunities to drive strategic change. Your ${getMaturityLevel(scores.people)} People & Skills rating suggests your team is ready to leverage AI tools effectively, while your ${getMaturityLevel(scores.tools)} Tools & Integration score indicates clear pathways for technical improvement.</p>
+            <p>The gap between your perceived ${perceivedMaturityLevel} and actual ${overallMaturityDescription} maturity highlights opportunities to drive strategic change. Your ${peopleLevel} People & Skills rating suggests your team is ready to leverage AI tools effectively, while your ${toolsLevel} Tools & Integration score indicates clear pathways for technical improvement.</p>
         </div>
 
         <div class="insights-section content-block">
@@ -904,8 +965,8 @@ function generateHTMLTemplate(data) {
                 <ul>
                     <li>Develop a clear 90-day AI implementation plan</li>
                     <li>Navigate the specific challenges you identified</li>
-                    <li>Leverage your People & Skills to drive quick wins</li>
-                    <li>Address your Tools & Integration systematically</li>
+                    <li>Leverage your ${strongestArea} to drive quick wins</li>
+                    <li>Address your ${growthOpportunity} systematically</li>
                 </ul>
             </div>
         </div>
@@ -929,12 +990,12 @@ function generateHTMLTemplate(data) {
 </html>`;
 }
 
-// Email sending function - REPLACE ENTIRE FUNCTION
+// Email sending function
 async function sendReportEmail({ recipientEmail, clientName, companyName, scores, pdfBuffer }) {
   console.log('📧 Sending email to:', recipientEmail);
-console.log('🔍 DEBUG: Using domain:', process.env.MAILGUN_DOMAIN);
-console.log('🔍 DEBUG: API Key exists:', !!process.env.MAILGUN_API_KEY);
-console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer.length, 'bytes');
+  console.log('🔍 DEBUG: Using domain:', process.env.MAILGUN_DOMAIN);
+  console.log('🔍 DEBUG: API Key exists:', !!process.env.MAILGUN_API_KEY);
+  console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer.length, 'bytes');
   
   const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
   const getMaturityLevel = (score) => {
@@ -956,63 +1017,63 @@ console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer.length, 'bytes');
   };
 
   try {
-    
-const emailData = {
-  from: 'Brave Concept AI <postmaster@sandbox1216a761200e427d9324c4a064325a7e.mailgun.org>',
-  to: recipientEmail,
-  subject: `✅ Your AI Assessment Results Are Ready - ${companyName}`,
-  html: `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-     <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
-<h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">BRAVE CONCEPT AI</h1>
-<h2 style="margin: 0.5rem 0; font-size: 1.4rem; font-weight: 600; font-family: 'Montserrat', sans-serif;">AI MATURITY ASSESSMENT REPORT</h2>
-<p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-style: italic; font-family: 'Roboto', sans-serif;">Bold Ideas. Human Roots. Ethical By Design.</p>
-</div>
-      
-      <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
-      
-      <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
-      
-      <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
-        <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
-        <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
-        <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
-      </div>
-      
-      <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
-      <ul style="margin-left: 1.5rem;">
-        <li>✅ Detailed capability analysis</li>
-        <li>✅ Industry benchmarks</li>
-        <li>✅ Tailored recommendations</li>
-        <li>✅ 90-day action plan</li>
-      </ul>
-      
-      <div style="text-align: center; margin: 2rem 0;">
-        <a href="https://calendly.com/tony-braveconcept/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
-      </div>
-      
-      <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
-        <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
-        <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
-      </div>
-      
-      <p>Best regards,<br>
-      <strong>The Brave Concept AI Team</strong></p>
-      
-      <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
-        <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
-      </div>
+    const emailData = {
+      from: 'Brave Concept AI <postmaster@sandbox1216a761200e427d9324c4a064325a7e.mailgun.org>',
+      to: recipientEmail,
+      subject: `✅ Your AI Assessment Results Are Ready - ${companyName}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+         <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
+    <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">BRAVE CONCEPT AI</h1>
+    <h2 style="margin: 0.5rem 0; font-size: 1.4rem; font-weight: 600; font-family: 'Montserrat', sans-serif;">AI MATURITY ASSESSMENT REPORT</h2>
+    <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-style: italic; font-family: 'Roboto', sans-serif;">Bold Ideas. Human Roots. Ethical By Design.</p>
     </div>
-  `,
-  attachment: pdfBuffer,
-  'h:Reply-To': 'info@braveconcept.ai',
-  'h:X-Mailgun-Variables': JSON.stringify({
-    source: 'ai-assessment',
-    type: 'automated-report'
-  }),
-  'h:List-Unsubscribe': '<mailto:unsubscribe@braveconcept.ai>',
-  'h:X-Mailer': 'Brave Concept AI Assessment System'
-};
+          
+          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
+          
+          <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
+          
+          <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+            <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
+            <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
+            <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
+          </div>
+          
+          <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
+          <ul style="margin-left: 1.5rem;">
+            <li>✅ Detailed capability analysis</li>
+            <li>✅ Industry benchmarks</li>
+            <li>✅ Tailored recommendations</li>
+            <li>✅ 90-day action plan</li>
+          </ul>
+          
+          <div style="text-align: center; margin: 2rem 0;">
+            <a href="https://calendly.com/tony-braveconcept/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
+          </div>
+          
+          <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+            <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
+            <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
+          </div>
+          
+          <p>Best regards,<br>
+          <strong>The Brave Concept AI Team</strong></p>
+          
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+            <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
+          </div>
+        </div>
+      `,
+      attachment: pdfBuffer,
+      'h:Reply-To': 'info@braveconcept.ai',
+      'h:X-Mailgun-Variables': JSON.stringify({
+        source: 'ai-assessment',
+        type: 'automated-report'
+      }),
+      'h:List-Unsubscribe': '<mailto:unsubscribe@braveconcept.ai>',
+      'h:X-Mailer': 'Brave Concept AI Assessment System'
+    };
+    
     const result = await mg.messages().send(emailData);
     console.log('✅ Email sent successfully:', result);
     return { success: true, messageId: result.id };
