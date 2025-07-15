@@ -31,7 +31,9 @@ app.get('/', (req, res) => {
   });
 });
 
-// Main PDF generation endpoint
+// ONLY REPLACE THE BEGINNING OF THE /generate-report ENDPOINT:
+// Find this section and replace it with the version below:
+
 app.post('/generate-report', async (req, res) => {
   console.log('🚀 Starting AI Maturity Report generation...');
   
@@ -42,7 +44,7 @@ app.post('/generate-report', async (req, res) => {
       industry,
       reportId,
       assessmentDate,
-      scores, // { strategy: 3, tools: 2, people: 4, data: 3, ethics: 3 }
+      scores: rawScores, // ← CHANGED: Get raw scores first
       aiPoweredAnalysis,
       tailoredRecommendations,
       topOpportunities,
@@ -50,12 +52,28 @@ app.post('/generate-report', async (req, res) => {
       recipientEmail
     } = req.body;
 
+    // ← ADD THESE NEW LINES:
+    // Convert string scores to numbers
+    const scores = {
+      strategy: parseFloat(rawScores?.strategy) || 0,
+      tools: parseFloat(rawScores?.tools) || 0,  
+      people: parseFloat(rawScores?.people) || 0,
+      data: parseFloat(rawScores?.data) || 0,
+      ethics: parseFloat(rawScores?.ethics) || 0
+    };
+    
+    console.log('🔍 DEBUG: Raw scores:', rawScores);
+    console.log('🔍 DEBUG: Converted scores:', scores);
+    // ← END OF NEW LINES
+
     // Validate required fields
     if (!clientName || !companyName || !scores || !recipientEmail) {
       return res.status(400).json({ 
         error: 'Missing required fields: clientName, companyName, scores, recipientEmail' 
       });
     }
+
+    // ← LEAVE EVERYTHING ELSE EXACTLY THE SAME FROM HERE DOWN ←
 
     // Generate PDF
     const pdfBuffer = await generatePDF({
