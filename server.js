@@ -42,12 +42,6 @@ app.use('/generate-report', (req, res, next) => {
   next();
 });
 
-// Configure Mailgun
-const mg = mailgun({
-  apiKey: process.env.MAILGUN_API_KEY,
-  domain: process.env.MAILGUN_DOMAIN
-});
-
 // Health check endpoint
 app.get('/', (req, res) => {
   res.json({ 
@@ -1085,7 +1079,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
       'h:X-Mailer': 'Brave Concept AI Assessment System'
     };
     
-    const result = await mg.messages().send(emailData);
+    const result = await mailgun.messages().send(emailData);
     console.log('✅ Email sent successfully:', result);
     return { success: true, messageId: result.id };
     
