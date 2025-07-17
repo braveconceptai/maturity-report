@@ -78,69 +78,66 @@ app.post('/generate-report', async (req, res) => {
     console.log('🔍 DEBUG: Parsed body:', JSON.stringify(parsedBody, null, 2));
     
     const { 
-      clientName,
-      companyName, 
-      industry,
-      reportId,
-      assessmentDate,
-      recipientEmail,
-      scores: rawScores,
-      // NEW FIELDS FOR COMPREHENSIVE MAPPING
-      perceivedMaturity,
-      perceivedMaturityLevel,
-      overallMaturityLevel,
-      overallMaturityDescription,
-      strongestArea,
-      growthOpportunity,
-      strategyLevel,
-      peopleLevel,
-      toolsLevel,
-      dataLevel,
-      ethicsLevel,
-      // EXISTING FIELDS
-      aiPoweredAnalysis,
-      tailoredRecommendations,
-      topOpportunities,
-      topChallenges
-    } = parsedBody;
+  clientName,
+  companyName, 
+  industry,
+  reportId,
+  assessmentDate,
+  recipientEmail,
+  scores,
+  // NEW FIELDS FOR COMPREHENSIVE MAPPING
+  perceivedMaturity,
+  perceivedMaturityLevel,
+  overallMaturityLevel,
+  overallMaturityDescription,
+  strongestArea,
+  growthOpportunity,
+  strategyLevel,
+  peopleLevel,
+  toolsLevel,
+  dataLevel,
+  ethicsLevel,
+  // EXISTING FIELDS
+  aiPoweredAnalysis,
+  tailoredRecommendations,
+  topOpportunities,
+  topChallenges
+} = parsedBody;
 
-    // Convert string scores to numbers
-    const scores = {
-      strategy: parseFloat(rawScores?.strategy) || 0,
-      tools: parseFloat(rawScores?.tools) || 0,  
-      people: parseFloat(rawScores?.people) || 0,
-      data: parseFloat(rawScores?.data) || 0,
-      ethics: parseFloat(rawScores?.ethics) || 0
-    };
-    
-    console.log('🔍 DEBUG: Raw scores:', rawScores);
-    console.log('🔍 DEBUG: Converted scores:', scores);
-    console.log('🔍 DEBUG: Additional fields:', {
-      perceivedMaturity,
-      perceivedMaturityLevel,
-      overallMaturityLevel,
-      strongestArea,
-      growthOpportunity
-    });
+console.log('🔍 DEBUG: Received scores:', scores);
+console.log('🔍 DEBUG: Additional fields:', {
+  perceivedMaturity,
+  perceivedMaturityLevel,
+  overallMaturityLevel,
+  strongestArea,
+  growthOpportunity
+});
 
-    // Enhanced validation
-    if (!clientName || !companyName || !recipientEmail || scores.strategy === 0) {
-      console.log('❌ Validation failed:', { 
-        clientName: !!clientName, 
-        companyName: !!companyName, 
-        recipientEmail: !!recipientEmail, 
-        strategyScore: scores.strategy 
-      });
-      return res.status(400).json({ 
-        error: 'Missing required fields or invalid scores',
-        received: { 
-          clientName: !!clientName, 
-          companyName: !!companyName, 
-          recipientEmail: !!recipientEmail, 
-          scores: scores 
-        }
-      });
+// Enhanced validation - Check scores object structure
+if (!clientName || !companyName || !recipientEmail || !scores || 
+    typeof scores !== 'object' || 
+    typeof scores.strategy !== 'number' || scores.strategy === 0 ||
+    typeof scores.tools !== 'number' || 
+    typeof scores.people !== 'number' || 
+    typeof scores.data !== 'number' || 
+    typeof scores.ethics !== 'number') {
+  console.log('❌ Validation failed:', { 
+    clientName: !!clientName, 
+    companyName: !!companyName, 
+    recipientEmail: !!recipientEmail, 
+    scores: scores,
+    scoresType: typeof scores
+  });
+  return res.status(400).json({ 
+    error: 'Missing required fields or invalid scores structure',
+    received: { 
+      clientName: !!clientName, 
+      companyName: !!companyName, 
+      recipientEmail: !!recipientEmail, 
+      scores: scores 
     }
+  });
+}
 
     console.log('✅ Validation passed!');
 
@@ -1018,7 +1015,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
 
   try {
     const emailData = {
-      from: 'Brave Concept AI <postmaster@sandbox1216a761200e427d9324c4a064325a7e.mailgun.org>',
+      from: 'Brave Concept AI <noreply@mg.braveconcept.ai>',
       to: recipientEmail,
       subject: `✅ Your AI Assessment Results Are Ready - ${companyName}`,
       html: `
@@ -1064,7 +1061,11 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
           </div>
         </div>
       `,
-      attachment: pdfBuffer,
+     attachment: {
+  data: pdfBuffer,
+  filename: `AI_Maturity_Report_${companyName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
+  contentType: 'application/pdf'
+},
       'h:Reply-To': 'info@braveconcept.ai',
       'h:X-Mailgun-Variables': JSON.stringify({
         source: 'ai-assessment',
