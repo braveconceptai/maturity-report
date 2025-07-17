@@ -1061,11 +1061,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
           </div>
         </div>
       `,
-     attachment: {
-  data: pdfBuffer,
-  filename: `AI_Maturity_Report_${companyName.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`,
-  contentType: 'application/pdf'
-},
+    attachment: pdfBuffer,
       'h:Reply-To': 'info@braveconcept.ai',
       'h:X-Mailgun-Variables': JSON.stringify({
         source: 'ai-assessment',
