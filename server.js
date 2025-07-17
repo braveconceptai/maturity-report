@@ -1078,6 +1078,8 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
       'h:List-Unsubscribe': '<mailto:unsubscribe@braveconcept.ai>',
       'h:X-Mailer': 'Brave Concept AI Assessment System'
     };
+
+    console.log('🔍 DEBUG emailData:', JSON.stringify(emailData, null, 2));
     
     const result = await mailgun.messages().send(emailData);
     console.log('✅ Email sent successfully:', result);
