@@ -1,11 +1,8 @@
 // server.js - Railway Web Service for PDF Generation
 const express = require('express');
 const puppeteer = require('puppeteer-core');
-// —–– MAILGUN SETUP —––––
-const mailgun = require('mailgun-js')({
-  apiKey: process.env.MAILGUN_API_KEY,
-  domain: process.env.MAILGUN_DOMAIN
-});
+// —–– MAILGUN V3 CLIENT —––––
+const mailgun = require('./mailgunClient');
 const chromium = require('@sparticuz/chromium');
 const multer = require('multer');
 const path = require('path');
