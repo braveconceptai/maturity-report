@@ -1078,7 +1078,10 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
 
     console.log('🔍 DEBUG emailData:', JSON.stringify(emailData, null, 2));
     
-    const result = await mailgun.messages().send(emailData);
+    const result = await mailgun.messages.create(
+      process.env.MAILGUN_DOMAIN,
+      emailData
+    );
     console.log('✅ Email sent successfully:', result);
     return { success: true, messageId: result.id };
     
