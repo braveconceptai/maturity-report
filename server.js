@@ -282,18 +282,6 @@ async function generatePDF(data) {
 
   await browser.close();
   console.log('✅ PDF generated successfully');
-  // ── MAILGUN: send PDF attachment ──
-console.log('📧 Sending PDF to', data.recipientEmail);
-await mailgun.messages().send({
-  from:    `Brave Concept AI Reports <reports@${process.env.MAILGUN_DOMAIN}>`,
-  to:      data.recipientEmail,
-  subject: `Your AI Maturity Assessment Report`,
-  text:    `Hi ${data.clientName},\n\nPlease find your personalized report attached.\n\n– Brave Concept AI`,
-  attachment: pdf    // <-- that’s the Buffer from page.pdf()
-});
-return res
-  .status(200)
-  .json({ success: true, message: 'Report emailed.' });
 }
 
 // UPDATED HTML template function with ALL field mappings
