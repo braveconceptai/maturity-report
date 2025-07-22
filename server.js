@@ -1,95 +1,101 @@
-// server.js - Railway Web Service for PDF Generation
-const express = require('express');
-//const puppeteer = require('puppeteer-core');
-// —–– MAILGUN V3 CLIENT —––––
-const mailgun = require('./mailgunClient');
-//const chromium = require('@sparticuz/chromium');
-const multer = require('multer');
-const path = require('path');
+// server.js - Final Master Version
 
+// --- 1. REQUIRE PACKAGES ---
+const express = require('express');
+const puppeteer = require('puppeteer-core');
+const chromium = require('@sparticuz/chromium');
+const sgMail = require('@sendgrid/mail');
+
+// --- 2. CONFIGURE DEPENDENCIES ---
+sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Enhanced middleware configuration for Railway + Zapier
-app.use(express.json({ 
-  limit: '10mb',
-  type: ['application/json', 'application/*+json'],
-  verify: (req, res, buf) => {
-    req.rawBody = buf; // Store raw body for debugging
-  }
-}));
+// --- 3. MIDDLEWARE ---
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use(express.urlencoded({ 
-  extended: true,
-  limit: '10mb',
-  type: 'application/x-www-form-urlencoded'
-}));
-
-// Debugging middleware for webhooks
-app.use('/generate-report', (req, res, next) => {
-  console.log('🔍 Request Headers:', req.headers);
-  console.log('🔍 Content-Type:', req.get('Content-Type'));
-  console.log('🔍 Request Method:', req.method);
-  
-  // Log first 500 chars of raw body if available
-  if (req.rawBody) {
-    console.log('🔍 Raw body preview:', req.rawBody.toString().substring(0, 500));
-  }
-  
-  next();
-});
-
-// Health check endpoint
+// --- 4. ROUTES ---
 app.get('/', (req, res) => {
-  res.json({ 
-    status: 'AI Maturity Report Service Running',
-    timestamp: new Date().toISOString(),
-    endpoints: {
-      health: 'GET /',
-      generateReport: 'POST /generate-report'
-    }
-  });
+  res.json({ status: 'AI Maturity Report Service Running' });
 });
 
-// Diagnostic version of the endpoint
 app.post('/generate-report', async (req, res) => {
-  console.log('DIAGNOSTIC TEST: /generate-report endpoint reached.');
-  console.log('Request body:', req.body);
+  console.log('🚀 Starting report generation...');
+  try {
+    const reportData = req.body;
+    const { clientName, companyName, recipientEmail, scores } = reportData;
 
-  // We are intentionally not generating a PDF or sending an email.
-  // This test is only to see if the server can start up.
+    if (!clientName || !companyName || !recipientEmail || !scores) {
+      console.error('❌ Validation failed: Missing required fields.');
+      return res.status(400).json({ error: 'Missing required fields.' });
+    }
 
-  res.status(200).json({ 
-    success: true, 
-    message: 'Diagnostic test successful. Server is running without Puppeteer.' 
-  });
+    console.log('📄 Generating PDF...');
+    const pdfBuffer = await generatePDF(reportData);
+
+    console.log('✅ PDF generated. Sending email via SendGrid...');
+    await sendReportEmail(recipientEmail, clientName, companyName, pdfBuffer);
+
+    res.status(200).json({ success: true, message: 'Report generated and sent successfully.' });
+
+  } catch (error) {
+    console.error('❌ Error in /generate-report:', error);
+    res.status(500).json({ success: false, error: 'Failed to process report', details: error.message });
+  }
 });
 
-// UPDATED HTML template function with ALL field mappings
-function generateHTMLTemplate(data) {
-  const { 
-    clientName, 
-    companyName, 
-    industry, 
-    reportId, 
-    assessmentDate, 
-    scores,
-    perceivedMaturity,
-    perceivedMaturityLevel,
-    overallMaturityLevel,
-    overallMaturityDescription,
-    strongestArea,
-    growthOpportunity,
-    strategyLevel,
-    peopleLevel,
-    toolsLevel,
-    dataLevel,
-    ethicsLevel,
-    aiPoweredAnalysis, 
-    tailoredRecommendations, 
-    topOpportunities, 
-    topChallenges 
-  } = data;
+// --- 5. CORE FUNCTIONS ---
+async function sendReportEmail(recipientEmail, clientName, companyName, pdfBuffer) {
+  const attachment = pdfBuffer.toString('base64');
+  const msg = {
+    to: recipientEmail,
+    from: {
+        name: 'Brave Concept AI',
+        email: process.env.SENDER_EMAIL
+    },
+    subject: `Your AI Maturity Report for ${companyName}`,
+    text: `Hi ${clientName},\n\nPlease find your personalized AI maturity report attached.\n\nThank you!`,
+    attachments: [{
+        content: attachment,
+        filename: `AI-Maturity-Report-${companyName}.pdf`,
+        type: 'application/pdf',
+        disposition: 'attachment',
+    }],
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log('✅ Email sent successfully via SendGrid');
+  } catch (error) {
+    console.error('❌ SendGrid send error:', error.response.body);
+    throw error;
+  }
+}
+
+async function generatePDF(data) {
+  let browser = null;
+  try {
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      defaultViewport: chromium.defaultViewport,
+      executablePath: await chromium.executablePath(),
+      headless: chromium.headless,
+    });
+
+    const page = await browser.newPage();
+    const htmlContent = generateHTMLTemplate(data);
+    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+
+    const pdf = await page.pdf({ format: 'Letter', printBackground: true });
+    return pdf;
+
+  } finally {
+    if (browser) {
+      await browser.close();
+    }
+  }
+}
 
   return `
 <!DOCTYPE html>
@@ -837,35 +843,7 @@ async function sendReportEmail(recipientEmail, clientName, companyName, scores, 
          </div>
         </div>
       `,
-      // THE FIX: This is the correct format for the Mailgun v4 SDK
-      attachment: [{
-        data: pdfBuffer,
-        filename: `AI-Maturity-Report-${companyName}.pdf`
-      }],
-      'h:Reply-To': 'info@braveconcept.ai'
-    };
-    
-    // Remember, your require('./mailgunClient') line at the top
-    // provides the 'mailgun' variable.
-    const result = await mailgun.messages.create(
-      process.env.MAILGUN_DOMAIN,
-      emailData
-    );
-    console.log('✅ Email sent successfully:', result);
-    return { success: true, messageId: result.id };
-    
-  } catch (error) {
-    console.error('❌ Email sending failed:', error);
-    throw error;
-  }
-}
-
-
-// Start server
+      // --- 6. START SERVER ---
 app.listen(PORT, () => {
   console.log(`🚀 AI Maturity Report Service running on port ${PORT}`);
-  console.log(`📍 Health check: http://localhost:${PORT}/`);
-  console.log(`📄 Generate report: POST http://localhost:${PORT}/generate-report`);
 });
-
-module.exports = app;
