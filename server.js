@@ -172,14 +172,12 @@ if (!clientName || !companyName || !recipientEmail || !scores ||
       topChallenges: topChallenges || 'Implementation planning and change management'
     });
 
-    // Send email with PDF attachment
-    await sendReportEmail({
+     // Send email with PDF attachment
+    await sendReportEmail(
       recipientEmail,
       clientName,
-      companyName,
-      scores,
       pdfBuffer
-    });
+    );
 
     console.log('✅ Report generated and sent successfully');
     
@@ -282,6 +280,7 @@ async function generatePDF(data) {
 
   await browser.close();
   console.log('✅ PDF generated successfully');
+  return pdf;
 }
 
 // UPDATED HTML template function with ALL field mappings
@@ -981,11 +980,13 @@ function generateHTMLTemplate(data) {
 }
 
 // Email sending function
-async function sendReportEmail({ recipientEmail, clientName, companyName, scores, pdfBuffer }) {
+async function sendReportEmail(recipientEmail, clientName, companyName, scores, pdfBuffer) {
   console.log('📧 Sending email to:', recipientEmail);
-  console.log('🔍 DEBUG: Using domain:', process.env.MAILGUN_DOMAIN);
-  console.log('🔍 DEBUG: API Key exists:', !!process.env.MAILGUN_API_KEY);
-  console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer.length, 'bytes');
+  console.log('🔍 DEBUG: PDF Buffer size:', pdfBuffer ? `${pdfBuffer.length} bytes` : 'undefined');
+
+  if (!pdfBuffer) {
+    throw new Error("Cannot send email, the PDF buffer is missing.");
+  }
   
   const overallScore = Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5);
   const getMaturityLevel = (score) => {
@@ -995,9 +996,6 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
     return 'Leading';
   };
 
-  const strongestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
-  const weakestArea = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
-
   const areaNames = {
     strategy: 'Strategy & Planning',
     tools: 'Tools & Integration',
@@ -1005,6 +1003,9 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
     data: 'Data Readiness',
     ethics: 'Ethics & Governance'
   };
+
+  const strongest = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+  const weakest = Object.keys(scores).reduce((a, b) => scores[a] < scores[b] ? a : b);
 
   try {
     const emailData = {
@@ -1014,58 +1015,56 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
          <div style="background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #06b6d4 100%); color: white; padding: 2rem; text-align: center; border-radius: 8px; margin-bottom: 2rem;">
-    <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">BRAVE CONCEPT AI</h1>
-    <h2 style="margin: 0.5rem 0; font-size: 1.4rem; font-weight: 600; font-family: 'Montserrat', sans-serif;">AI MATURITY ASSESSMENT REPORT</h2>
-    <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-style: italic; font-family: 'Roboto', sans-serif;">Bold Ideas. Human Roots. Ethical By Design.</p>
-    </div>
-          
-          <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
-          
-          <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
-          
-          <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
-            <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
-            <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongestArea[0]]}</p>
-            <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakestArea[0]]}</p>
-          </div>
-          
-          <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
-          <ul style="margin-left: 1.5rem;">
-            <li>✅ Detailed capability analysis</li>
-            <li>✅ Industry benchmarks</li>
-            <li>✅ Tailored recommendations</li>
-            <li>✅ 90-day action plan</li>
-          </ul>
-          
-          <div style="text-align: center; margin: 2rem 0;">
-            <a href="https://calendly.com/tony-braveconcept/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
-          </div>
-          
-          <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
-            <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
-            <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
-          </div>
-          
-          <p>Best regards,<br>
-          <strong>The Brave Concept AI Team</strong></p>
-          
-          <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
-            <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
-          </div>
+   <h1 style="margin: 0; font-size: 1.8rem; font-weight: 700; font-family: 'Montserrat', sans-serif;">BRAVE CONCEPT AI</h1>
+   <h2 style="margin: 0.5rem 0; font-size: 1.4rem; font-weight: 600; font-family: 'Montserrat', sans-serif;">AI MATURITY ASSESSMENT REPORT</h2>
+   <p style="margin: 0.5rem 0 0 0; opacity: 0.9; font-style: italic; font-family: 'Roboto', sans-serif;">Bold Ideas. Human Roots. Ethical By Design.</p>
+   </div>
+         
+         <p style="font-size: 1.1rem; margin-bottom: 1.5rem;">Hi ${clientName},</p>
+         
+         <p>🎉 Your AI Maturity Assessment is complete! Here are your key insights:</p>
+         
+         <div style="background: #f8fafc; border-left: 4px solid #3b82f6; padding: 1.5rem; margin: 1.5rem 0; border-radius: 0 8px 8px 0;">
+           <p style="margin: 0;"><strong>📊 Your AI Maturity Level:</strong> ${overallScore}/5 - ${getMaturityLevel(overallScore)}</p>
+           <p style="margin: 0.5rem 0;"><strong>🎯 Strongest Area:</strong> ${areaNames[strongest]}</p>
+           <p style="margin: 0;"><strong>⚡ Growth Opportunity:</strong> ${areaNames[weakest]}</p>
+         </div>
+         
+         <p><strong>📄 Download your complete 5-page personalized report (attached) for:</strong></p>
+         <ul style="margin-left: 1.5rem;">
+           <li>✅ Detailed capability analysis</li>
+           <li>✅ Industry benchmarks</li>
+           <li>✅ Tailored recommendations</li>
+           <li>✅ 90-day action plan</li>
+         </ul>
+         
+         <div style="text-align: center; margin: 2rem 0;">
+           <a href="https://calendly.com/tony-braveconcept/30min" style="background: #3b82f6; color: white; padding: 1rem 2rem; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">🗓️ Schedule Your FREE 30-Minute Strategy Session</a>
+         </div>
+         
+         <div style="background: #f1f5f9; padding: 1.5rem; border-radius: 8px; margin: 2rem 0;">
+           <p style="margin: 0;"><strong>🚀 Ready to accelerate your AI journey?</strong></p>
+           <p style="margin: 0.5rem 0 0 0;">Get personalized guidance from our AI experts to develop your implementation plan and navigate the specific challenges you identified.</p>
+         </div>
+         
+         <p>Best regards,<br>
+         <strong>The Brave Concept AI Team</strong></p>
+         
+         <div style="border-top: 1px solid #e2e8f0; padding-top: 1rem; margin-top: 2rem; text-align: center; color: #64748b; font-size: 0.9rem;">
+           <p>📧 info@braveconcept.ai | 🌐 braveconcept.ai | 📞 (802) 560-8669</p>
+         </div>
         </div>
       `,
-    attachment: pdfBuffer,
-      'h:Reply-To': 'info@braveconcept.ai',
-      'h:X-Mailgun-Variables': JSON.stringify({
-        source: 'ai-assessment',
-        type: 'automated-report'
-      }),
-      'h:List-Unsubscribe': '<mailto:unsubscribe@braveconcept.ai>',
-      'h:X-Mailer': 'Brave Concept AI Assessment System'
+      // THE FIX: This is the correct format for the Mailgun v4 SDK
+      attachment: [{
+        data: pdfBuffer,
+        filename: `AI-Maturity-Report-${companyName}.pdf`
+      }],
+      'h:Reply-To': 'info@braveconcept.ai'
     };
-
-    console.log('🔍 DEBUG emailData:', JSON.stringify(emailData, null, 2));
     
+    // Remember, your require('./mailgunClient') line at the top
+    // provides the 'mailgun' variable.
     const result = await mailgun.messages.create(
       process.env.MAILGUN_DOMAIN,
       emailData
@@ -1078,6 +1077,7 @@ async function sendReportEmail({ recipientEmail, clientName, companyName, scores
     throw error;
   }
 }
+
 
 // Start server
 app.listen(PORT, () => {
