@@ -1,9 +1,9 @@
 // server.js - Railway Web Service for PDF Generation
 const express = require('express');
-const puppeteer = require('puppeteer-core');
+//const puppeteer = require('puppeteer-core');
 // —–– MAILGUN V3 CLIENT —––––
 const mailgun = require('./mailgunClient');
-const chromium = require('@sparticuz/chromium');
+//const chromium = require('@sparticuz/chromium');
 const multer = require('multer');
 const path = require('path');
 
@@ -51,237 +51,19 @@ app.get('/', (req, res) => {
   });
 });
 
-// COMPLETE UPDATED GENERATE REPORT ENDPOINT
+// Diagnostic version of the endpoint
 app.post('/generate-report', async (req, res) => {
-  console.log('🚀 Starting AI Maturity Report generation...');
-  
-  try {
-    // DEBUG: Log the full request body
-    console.log('🔍 DEBUG: Full req.body:', JSON.stringify(req.body, null, 2));
-    
-    // FIX: Handle Zapier's stringified JSON format
-    let parsedBody;
-    if (req.body[""] && typeof req.body[""] === 'string') {
-      // Zapier sent JSON as a string in empty key
-      console.log('🔧 Parsing Zapier stringified JSON...');
-      parsedBody = JSON.parse(req.body[""]);
-    } else {
-      // Normal JSON object
-      parsedBody = req.body;
-    }
-    
-    console.log('🔍 DEBUG: Parsed body:', JSON.stringify(parsedBody, null, 2));
-    
-    const { 
-  clientName,
-  companyName, 
-  industry,
-  reportId,
-  assessmentDate,
-  recipientEmail,
-  scores,
-  // NEW FIELDS FOR COMPREHENSIVE MAPPING
-  perceivedMaturity,
-  perceivedMaturityLevel,
-  overallMaturityLevel,
-  overallMaturityDescription,
-  strongestArea,
-  growthOpportunity,
-  strategyLevel,
-  peopleLevel,
-  toolsLevel,
-  dataLevel,
-  ethicsLevel,
-  // EXISTING FIELDS
-  aiPoweredAnalysis,
-  tailoredRecommendations,
-  topOpportunities,
-  topChallenges
-} = parsedBody;
+  console.log('DIAGNOSTIC TEST: /generate-report endpoint reached.');
+  console.log('Request body:', req.body);
 
-console.log('🔍 DEBUG: Received scores:', scores);
-console.log('🔍 DEBUG: Additional fields:', {
-  perceivedMaturity,
-  perceivedMaturityLevel,
-  overallMaturityLevel,
-  strongestArea,
-  growthOpportunity
+  // We are intentionally not generating a PDF or sending an email.
+  // This test is only to see if the server can start up.
+
+  res.status(200).json({ 
+    success: true, 
+    message: 'Diagnostic test successful. Server is running without Puppeteer.' 
+  });
 });
-
-// Enhanced validation - Check scores object structure
-if (!clientName || !companyName || !recipientEmail || !scores || 
-    typeof scores !== 'object' || 
-    typeof scores.strategy !== 'number' || scores.strategy === 0 ||
-    typeof scores.tools !== 'number' || 
-    typeof scores.people !== 'number' || 
-    typeof scores.data !== 'number' || 
-    typeof scores.ethics !== 'number') {
-  console.log('❌ Validation failed:', { 
-    clientName: !!clientName, 
-    companyName: !!companyName, 
-    recipientEmail: !!recipientEmail, 
-    scores: scores,
-    scoresType: typeof scores
-  });
-  return res.status(400).json({ 
-    error: 'Missing required fields or invalid scores structure',
-    received: { 
-      clientName: !!clientName, 
-      companyName: !!companyName, 
-      recipientEmail: !!recipientEmail, 
-      scores: scores 
-    }
-  });
-}
-
-    console.log('✅ Validation passed!');
-
-    // Generate PDF with ALL fields
-    const pdfBuffer = await generatePDF({
-      clientName,
-      companyName,
-      industry: industry || 'Professional Services',
-      reportId: reportId || `BC-2025-${Date.now()}`,
-      assessmentDate: assessmentDate || new Date().toLocaleDateString('en-US', { 
-        weekday: 'long', 
-        year: 'numeric', 
-        month: 'long', 
-        day: 'numeric' 
-      }),
-      scores,
-      // NEW COMPREHENSIVE FIELDS
-      perceivedMaturity: perceivedMaturity || Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5),
-      perceivedMaturityLevel: perceivedMaturityLevel || getMaturityLevel(Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5)),
-      overallMaturityLevel: overallMaturityLevel || Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5),
-      overallMaturityDescription: overallMaturityDescription || getMaturityLevel(Math.round((scores.strategy + scores.tools + scores.people + scores.data + scores.ethics) / 5)),
-      strongestArea: strongestArea || getStrongestArea(scores),
-      growthOpportunity: growthOpportunity || getWeakestArea(scores),
-      strategyLevel: strategyLevel || getMaturityLevel(scores.strategy),
-      peopleLevel: peopleLevel || getMaturityLevel(scores.people),
-      toolsLevel: toolsLevel || getMaturityLevel(scores.tools),
-      dataLevel: dataLevel || getMaturityLevel(scores.data),
-      ethicsLevel: ethicsLevel || getMaturityLevel(scores.ethics),
-      // EXISTING FIELDS WITH FALLBACKS
-      aiPoweredAnalysis: aiPoweredAnalysis || 'Your organization shows strong potential for AI advancement with strategic implementation.',
-      tailoredRecommendations: tailoredRecommendations || [
-        'Focus on building your data foundation first',
-        'Start with pilot projects in high-impact areas', 
-        'Develop clear AI governance frameworks'
-      ],
-      topOpportunities: topOpportunities || 'Process automation and decision support',
-      topChallenges: topChallenges || 'Implementation planning and change management'
-    });
-
-     // Send email with PDF attachment
-    await sendReportEmail(
-      recipientEmail,
-      clientName,
-      pdfBuffer
-    );
-
-    console.log('✅ Report generated and sent successfully');
-    
-    res.json({ 
-      success: true, 
-      message: 'AI Maturity Report generated and sent successfully',
-      reportId: reportId || `BC-2025-${Date.now()}`,
-      timestamp: new Date().toISOString()
-    });
-
-  } catch (error) {
-    console.error('❌ Error generating report:', error);
-    res.status(500).json({ 
-      success: false, 
-      error: 'Failed to generate report',
-      details: error.message 
-    });
-  }
-});
-
-// HELPER FUNCTIONS
-function getMaturityLevel(score) {
-  if (score <= 1) return 'Emerging';
-  if (score <= 2) return 'Emerging';
-  if (score <= 3) return 'Developing';
-  if (score <= 4) return 'Advanced';
-  return 'Leading';
-}
-
-function getStrongestArea(scores) {
-  const areaNames = {
-    strategy: 'Strategy & Planning',
-    tools: 'Tools & Integration', 
-    people: 'People & Skills',
-    data: 'Data Readiness',
-    ethics: 'Ethics & Governance'
-  };
-  const strongest = Object.entries(scores).reduce((a, b) => scores[a[0]] > scores[b[0]] ? a : b);
-  return areaNames[strongest[0]];
-}
-
-function getWeakestArea(scores) {
-  const areaNames = {
-    strategy: 'Strategy & Planning',
-    tools: 'Tools & Integration', 
-    people: 'People & Skills',
-    data: 'Data Readiness',
-    ethics: 'Ethics & Governance'
-  };
-  const weakest = Object.entries(scores).reduce((a, b) => scores[a[0]] < scores[b[0]] ? a : b);
-  return areaNames[weakest[0]];
-}
-
-// PDF generation function
-async function generatePDF(data) {
-  console.log('📄 Starting PDF generation...');
-  
-  const browser = await puppeteer.launch({
-    args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
-    executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-  });
-
-  const page = await browser.newPage();
-
-  await page.setViewport({
-    width: 1200,
-    height: 1600,
-    deviceScaleFactor: 2
-  });
-
-  // Generate HTML template with data injection
-  const htmlContent = generateHTMLTemplate(data);
-
-  await page.setContent(htmlContent, {
-    waitUntil: 'networkidle0',
-    timeout: 60000
-  });
-
-  await page.emulateMediaType('print');
-
-  const pdf = await page.pdf({
-    format: 'Letter',
-    margin: {
-      top: '0.5in',
-      right: '0.4in',
-      bottom: '0.5in',
-      left: '0.4in'
-    },
-    printBackground: true,
-    scale: 0.85,
-    preferCSSPageSize: true,
-    displayHeaderFooter: false,
-    waitForFonts: true,
-    timeout: 60000,
-    omitBackground: false,
-    tagged: true
-  });
-
-  await browser.close();
-  console.log('✅ PDF generated successfully');
-  return pdf;
-}
 
 // UPDATED HTML template function with ALL field mappings
 function generateHTMLTemplate(data) {
