@@ -1,10 +1,11 @@
 // mailgunClient.js
 const formData = require('form-data');
-const Mailgun = require('mailgun.js');
+// note the .default here:
+const Mailgun  = require('mailgun.js').default;
 
-// Initialize the Mailgun v3 client
+// initialize the v4 client
 const mg = new Mailgun(formData).client({
-  username: 'api',                    // always “api” for Mailgun
+  username: 'api',                    // always "api" for Mailgun
   key:      process.env.MAILGUN_API_KEY
 });
 
